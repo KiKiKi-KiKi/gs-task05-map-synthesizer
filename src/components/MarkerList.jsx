@@ -25,7 +25,7 @@ export default function MarkerList() {
 
   const markerList = useMemo(() => {
     return markers.map((marker) => <MarkerListItem key={marker.id} onRemove={onRemove(marker.id)} {...marker} />)
-  }, [markers]);
+  }, [markers, onRemove]);
 
   return (
     <ul className="marker-list">
