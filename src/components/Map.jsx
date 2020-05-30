@@ -58,6 +58,9 @@ export default function Map({ initialPosition }) {
       }}
       defaultCenter={initialPosition}
       defaultZoom={11}
+      options={{
+        gestureHandling: 'cooperative',
+      }}
       onGoogleApiLoaded={onLoaded}
     >
     </GoogleMapReact>
