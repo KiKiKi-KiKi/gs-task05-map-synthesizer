@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.map-container {
+  width: 80vw;
+  height: 100vh;
+}
+
+.marker-container {
+  width: 20vw;
+}
+
+.marker-list {
+  font-size: small;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.marker-list-item {
+  .position {
+    display: flex;
+    flex-direction: column;
+  }
+}

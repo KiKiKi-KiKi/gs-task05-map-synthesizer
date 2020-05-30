@@ -1,7 +1,9 @@
-import React, { useState, useReducer, useCallback } from 'react';
+import React, { useContext, useCallback } from 'react';
+import MapContext from '../contexts/MapContext';
+import { ADD_MARKER } from '../actions/marker';
+
 import GoogleMapReact from 'google-map-react';
 import { MAP_API_KEY } from '../config';
-import reducer, { ADD_MARKER } from '../reducers/markers';
 
 const addMarkrtToMap = ({ map, maps, position }) => {
   const marker = new maps.Marker({
@@ -31,13 +33,13 @@ const addMarkrtToMap = ({ map, maps, position }) => {
 }
 
 export default function Map({ initialPosition }) {
-  const [pins, dispatch] = useReducer(reducer);
+  const { markers, dispatch } = useContext(MapContext);
 
   const addMarker = useCallback(({ map, maps }) => (e) => {
     console.log(`Add Marker`, e);
     const marker = addMarkrtToMap({ map, maps, position: e.latLng });
     dispatch({ type: ADD_MARKER, marker });
-  }, [dispatch])
+  }, [dispatch]);
 
   const onLoaded = useCallback(({ map, maps }) => {
     const marker = addMarkrtToMap({ map, maps, position: initialPosition });
@@ -45,9 +47,9 @@ export default function Map({ initialPosition }) {
 
     const onAddMarker = addMarker({ map, maps });
     map.addListener('click', onAddMarker);
-  }, [initialPosition, dispatch]);
+  }, [initialPosition, addMarker, dispatch]);
 
-  console.log(pins);
+  console.log(markers);
 
   return (
     <GoogleMapReact
