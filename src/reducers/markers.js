@@ -12,11 +12,14 @@ const reducer = (state = [], action) => {
         lng: marker.position.lng(),
       };
       marker._id = id;
-      return [...state, {
-        id,
-        marker,
-        position,
-      }];
+      return [
+        ...state,
+        {
+          id,
+          marker,
+          position,
+        },
+      ];
     }
     case UPDATE_POSITION: {
       console.log(UPDATE_POSITION, action.marker._id);
@@ -28,7 +31,7 @@ const reducer = (state = [], action) => {
         position: {
           lat: action.position.lat(),
           lng: action.position.lng(),
-        }
+        },
       };
       return cloneState;
     }
@@ -45,6 +48,6 @@ const reducer = (state = [], action) => {
       return state;
     }
   }
-}
+};
 
 export default reducer;

@@ -21,9 +21,9 @@ const addMarkerToMap = ({ map, maps, position, onChange }) => {
       <p>lat: ${marker.position.lat()}</p>
       <p>lng: ${marker.position.lng()}</p>
     </div>`;
-  }
+  };
 
-  let infoWindow
+  let infoWindow;
 
   marker.addListener('click', (e) => {
     console.log(marker, e);
@@ -46,26 +46,45 @@ const addMarkerToMap = ({ map, maps, position, onChange }) => {
 export default function Map({ initialPosition }) {
   const { markers, dispatch } = useContext(MapContext);
 
-  const onChangePosition = useCallback(({ marker, position }) => {
-    dispatch({ type: UPDATE_POSITION, marker, position });
-  }, [dispatch]);
+  const onChangePosition = useCallback(
+    ({ marker, position }) => {
+      dispatch({ type: UPDATE_POSITION, marker, position });
+    },
+    [dispatch],
+  );
 
-  const addMarker = useCallback(({ map, maps }) => (e) => {
-    console.log(`Add Marker`, e);
-    const marker = addMarkerToMap({ map, maps, position: e.latLng, onChange: onChangePosition });
-    dispatch({ type: ADD_MARKER, marker });
-  }, [dispatch, onChangePosition]);
+  const addMarker = useCallback(
+    ({ map, maps }) => (e) => {
+      console.log(`Add Marker`, e);
+      const marker = addMarkerToMap({
+        map,
+        maps,
+        position: e.latLng,
+        onChange: onChangePosition,
+      });
+      dispatch({ type: ADD_MARKER, marker });
+    },
+    [dispatch, onChangePosition],
+  );
 
   // on Load Map
-  const onLoaded = useCallback(({ map, maps }) => {
-    // initial Marker
-    const marker = addMarkerToMap({ map, maps, position: initialPosition, onChange: onChangePosition });
-    dispatch({ type: ADD_MARKER, marker });
+  const onLoaded = useCallback(
+    ({ map, maps }) => {
+      // initial Marker
+      const marker = addMarkerToMap({
+        map,
+        maps,
+        position: initialPosition,
+        onChange: onChangePosition,
+      });
+      dispatch({ type: ADD_MARKER, marker });
 
-    // when click, add new marker to map
-    const onAddMarker = addMarker({ map, maps });
-    map.addListener('click', onAddMarker);
-  }, [initialPosition, addMarker, onChangePosition, dispatch]);
+      // when click, add new marker to map
+      const onAddMarker = addMarker({ map, maps });
+      map.addListener('click', onAddMarker);
+    },
+    [initialPosition, addMarker, onChangePosition, dispatch],
+  );
 
   console.log(markers);
 
@@ -80,8 +99,6 @@ export default function Map({ initialPosition }) {
         gestureHandling: 'cooperative',
       }}
       onGoogleApiLoaded={onLoaded}
-    >
-    </GoogleMapReact>
+    ></GoogleMapReact>
   );
 }
-
