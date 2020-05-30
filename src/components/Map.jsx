@@ -2,7 +2,7 @@ import React, { useContext, useCallback } from 'react';
 import MapContext from '../contexts/MapContext';
 import { ADD_MARKER, UPDATE_POSITION } from '../actions/marker';
 import GoogleMapReact from 'google-map-react';
-import { MAP_API_KEY } from '../config';
+import { MAP_API_KEY, DEFAULT_ZOOOM } from '../config';
 
 const addMarkerToMap = ({ map, maps, position, onChange }) => {
   const marker = new maps.Marker({
@@ -75,7 +75,7 @@ export default function Map({ initialPosition }) {
         key: MAP_API_KEY,
       }}
       defaultCenter={initialPosition}
-      defaultZoom={11}
+      defaultZoom={DEFAULT_ZOOOM}
       options={{
         gestureHandling: 'cooperative',
       }}
