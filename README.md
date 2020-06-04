@@ -9,4 +9,14 @@
 - longitude ... 旧グリニッジ天文台跡 0度 東西に180度 (max)  
   googlemap: -180 - 0 - 180 
 
-cf. https://www.pasco.co.jp/recommend/word/word026/
+緯度経度は次のように表せる `N deg M:S` -> 0-60分, 0-3600秒
+
+google map: `度 + (m /60) + (s / 3600)`
+
+cf. 
+- https://www.pasco.co.jp/recommend/word/word026/
+- https://japonyol.net/editor/article/degree-minute-second-lat-lng.html
+
+## Tone.js
+
+https://github.com/Tonejs/Tone.js
