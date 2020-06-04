@@ -5,6 +5,15 @@ import GoogleMapReact from 'google-map-react';
 import { MAP_API_KEY, DEFAULT_ZOOOM, MAP_STYLE } from '../config';
 
 import { convertToneToLatLng, synthInit, testTone } from '../synth';
+import getCurrentWeather from '../weather';
+
+const getWeather = (marker) => async ({lat, lng}) => {
+  const weatherData = await getCurrentWeather({ lat, lng });
+  console.log(weatherData);
+  marker._weather = weatherData;
+  return weatherData;
+};
+
 
 const addMarkerSound = ({lat, lng}) => {
   const tones = convertToneToLatLng(lat, lng);
@@ -17,6 +26,8 @@ const addMarkerToMap = ({ map, maps, position, onChange }) => {
     map,
     draggable: true,
   });
+
+  marker._getWeather = getWeather(marker);
 
   let timer = null;
 
@@ -36,6 +47,10 @@ const addMarkerToMap = ({ map, maps, position, onChange }) => {
   marker.addListener('dragend', (e) => {
     console.log('dragend', e);
     onChange({ marker: marker, position: e.latLng });
+    marker._getWeather({
+      lat: e.latLng.lat(),
+      lng: e.latLng.lng(),
+    });
   });
 
   const getWindowContent = (marker) => {
@@ -62,10 +77,9 @@ const addMarkerToMap = ({ map, maps, position, onChange }) => {
     }
   });
 
-  addMarkerSound({
-    lat: marker.position.lat(),
-    lng: marker.position.lng(),
-  });
+  const [lat, lng] = [marker.position.lat(), marker.position.lng()];
+  addMarkerSound({ lat, lng });
+  marker._getWeather({ lat, lng });
 
   return marker;
 };

@@ -20,6 +20,7 @@
     "localserver": "node server.js"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "google-map-react": "^1.1.7",
     "normalize.css": "^8.0.1",
     "react": "^16.13.1",
