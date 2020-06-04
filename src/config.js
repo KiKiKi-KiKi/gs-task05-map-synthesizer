@@ -6,4 +6,4 @@ export const DEFAULT_POSITION = {
   lng: 139.7432442,
 };
 
-export const DEFAULT_ZOOOM = 9;
+export const DEFAULT_ZOOOM = 3;

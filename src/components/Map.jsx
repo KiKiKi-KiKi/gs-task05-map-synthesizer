@@ -1,14 +1,36 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useEffect } from 'react';
 import MapContext from '../contexts/MapContext';
 import { ADD_MARKER, UPDATE_POSITION } from '../actions/marker';
 import GoogleMapReact from 'google-map-react';
 import { MAP_API_KEY, DEFAULT_ZOOOM } from '../config';
+
+import { convertToneToLatLng, synthInit, testTone } from '../synth';
+
+const addMarkerSound = ({lat, lng}) => {
+  const tones = convertToneToLatLng(lat, lng);
+  testTone(tones);
+}
 
 const addMarkerToMap = ({ map, maps, position, onChange }) => {
   const marker = new maps.Marker({
     position: position,
     map,
     draggable: true,
+  });
+
+  let timer = null;
+
+  // drag event
+  marker.addListener('drag', (e) => {
+    timer && clearTimeout(timer);
+    timer = setTimeout(() => {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      console.log('on Drag', lat, lng);
+      const tones = convertToneToLatLng(lat, lng);
+      console.log(tones);
+      testTone(tones);
+    }, 10);
   });
 
   marker.addListener('dragend', (e) => {
@@ -38,6 +60,11 @@ const addMarkerToMap = ({ map, maps, position, onChange }) => {
       infoWindow.close();
       infoWindow = null;
     }
+  });
+
+  addMarkerSound({
+    lat: marker.position.lat(),
+    lng: marker.position.lng(),
   });
 
   return marker;
@@ -85,6 +112,10 @@ export default function Map({ initialPosition }) {
     },
     [initialPosition, addMarker, onChangePosition, dispatch],
   );
+
+  useEffect(() => {
+    synthInit();
+  }, []);
 
   console.log(markers);
 
