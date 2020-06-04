@@ -1,5 +1,8 @@
 import axios from 'axios';
 import { WEATHER_API_KEY } from './config';
+
+export const WEATHER_ICON_PATH = 'http://openweathermap.org/img/w/';
+
 const CURRNET_WEATHER_DATA = `http://api.openweathermap.org/data/2.5/weather?appid=${WEATHER_API_KEY}`;
 
 const getCurrentWeather = async ({ lat, lng }) => {

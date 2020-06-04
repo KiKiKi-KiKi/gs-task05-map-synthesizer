@@ -1,5 +1,5 @@
 import { convertToneByLatLng, testSounde } from '../synth';
-import getCurrentWeather from '../weather';
+import getCurrentWeather, { WEATHER_ICON_PATH } from '../weather';
 
 const getWeather = (marker) => async ({ lat, lng }) => {
   const weatherData = await getCurrentWeather({ lat, lng });
@@ -18,14 +18,6 @@ export const addMarkerEvents = ({ marker, onChange }) => {
   marker._getWeather = getWeather(marker);
 
   // drag Events
-  marker.addListener('dragstart', () => {
-    if (!marker._openWindow) {
-      return false;
-    }
-    marker._infoWindow.close();
-    marker._infoWindow = null;
-  });
-
   marker.addListener('dragend', (e) => {
     console.log('dragend', e);
     onChange({ marker: marker, position: e.latLng });
@@ -46,6 +38,9 @@ export const addMarkerEvents = ({ marker, onChange }) => {
       markerPositionSound({ lat, lng });
     }, 10);
   });
+
+  const [lat, lng] = [marker.position.lat(), marker.position.lng()];
+  marker._getWeather({lat, lng});
 };
 
 const Marker = ({ map, maps, position }) => {
@@ -55,29 +50,50 @@ const Marker = ({ map, maps, position }) => {
     draggable: true,
   });
 
-  marker._indoWindow = null;
-  marker._openWindow = false;
+  let indoWindow = null;
+  let openWindow = false;
   const getWindowContent = (marker) => {
-    return `<div>
-      <p>lat: ${marker.position.lat()}</p>
-      <p>lng: ${marker.position.lng()}</p>
+    if (!marker._weather) {
+      return `<div>Loading...</div>`;
+    }
+    const weather = marker._weather.weather[0];
+    const wind = marker._weather.wind;
+    return `<div class="marker-info">
+      <div>
+        <figure class="weather-icon"><img src=${WEATHER_ICON_PATH}${weather.icon}.png /></figure>
+        <span>${weather.main} (${weather.description})</span>
+      </div>
+      <div>
+        <div>Wind<div>
+        <span>${wind.deg} deg</span>
+        <span>Speed: ${wind.speed}</span>
+      </div>
     </div>`;
   };
 
   // show info window
   marker.addListener('click', (e) => {
     console.log(marker, e);
-    if (!marker._openWindow) {
-      marker._openWindow = true;
-      marker._indoWindow = new maps.InfoWindow({
+    if (!openWindow) {
+      openWindow = true;
+      indoWindow = new maps.InfoWindow({
         content: getWindowContent(marker),
       });
-      marker._indoWindow.open(map, marker);
+      indoWindow.open(map, marker);
     } else {
-      marker._openWindow = false;
-      marker._indoWindow.close();
-      marker._indoWindow = null;
+      indoWindow.close();
+      indoWindow = null;
+      openWindow = false;
     }
+  });
+
+  marker.addListener('dragstart', () => {
+    if (!openWindow) {
+      return false;
+    }
+    indoWindow.close();
+    indoWindow = null;
+    openWindow = false;
   });
 
   const [lat, lng] = [marker.position.lat(), marker.position.lng()];
