@@ -23,7 +23,8 @@
     "google-map-react": "^1.1.7",
     "normalize.css": "^8.0.1",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "tone": "^13.8.25"
   },
   "devDependencies": {
     "eslint": "^6.6.0",
