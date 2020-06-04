@@ -2,7 +2,7 @@ import React, { useContext, useCallback, useEffect } from 'react';
 import MapContext from '../contexts/MapContext';
 import { ADD_MARKER, UPDATE_POSITION } from '../actions/marker';
 import GoogleMapReact from 'google-map-react';
-import { MAP_API_KEY, DEFAULT_ZOOOM } from '../config';
+import { MAP_API_KEY, DEFAULT_ZOOOM, MAP_STYLE } from '../config';
 
 import { convertToneToLatLng, synthInit, testTone } from '../synth';
 
@@ -128,6 +128,7 @@ export default function Map({ initialPosition }) {
       defaultZoom={DEFAULT_ZOOOM}
       options={{
         gestureHandling: 'cooperative',
+        styles: MAP_STYLE,
       }}
       onGoogleApiLoaded={onLoaded}
     ></GoogleMapReact>
