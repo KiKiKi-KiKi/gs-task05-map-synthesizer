@@ -61,7 +61,7 @@ export const getToneDataByLatLng = ({ lat, lng }) => {
   const [lngInt, lngDecimal] = getIntegerDecimal(lng);
 
   // convert Pich by Lat
-  const basePich = Math.round(Math.abs(latInt / 90) * 10);
+  const basePitch = Math.round(Math.abs(latInt / 90) * 10);
   const toneIndexs = [
     getToneIndexByDecimal(latDecimal),
     getToneIndexByDecimal(lngDecimal),
@@ -75,15 +75,111 @@ export const getToneDataByLatLng = ({ lat, lng }) => {
   return {
     baseToneKey,
     toneKeys,
-    basePich,
+    basePitch,
   };
 };
 
-export const convertToneByLatLng = ({ lat, lng }) => {
-  const { toneKeys, basePich } = getToneDataByLatLng({ lat, lng });
-  const tones = toneKeys.map((i) => TONES[i] + basePich);
-  return tones;
+export const getCodeByToneKeys = ({ toneKeys, basePitch }) => {
+  return toneKeys.map((i) => TONES[i] + basePitch);
 };
+
+export const convertToneByLatLng = ({ lat, lng }) => {
+  return getCodeByToneKeys(getToneDataByLatLng({ lat, lng }));
+};
+
+const getTonePitch = (tone, pitch) => {
+  const toneLen = TONES.length;
+  if (tone > toneLen - 1) {
+    return [tone - toneLen, pitch + 1];
+  }
+  return [tone, pitch];
+};
+
+/*
+  +4 ... 3音
+  +7 ... 5音
+  sunny   -> メジャー 長３
+  cloudy  -> マイナー 短3
+  rain    -> aug 5音半音上げ
+  thunder -> dim ５音半音下げ
+  snow    -> sus4 3音半音上げ
+  mist    -> sus4
+*/
+const getToneByWeathrt = ({ weatherType, baseToneKey, basePitch}) => {
+  console.log(weatherType);
+  let toneIndex;
+  switch (weatherType) {
+    case 'sunny': {
+      console.log('Major 3');
+      toneIndex = baseToneKey + 4;
+      break;
+    }
+    case 'cloudy': {
+      console.log('minor 3');
+      toneIndex = baseToneKey + 3;
+      break;
+    }
+    case 'rain': {
+      console.log('aug');
+      toneIndex = baseToneKey + 8;
+      break;
+    }
+    case 'thunder': {
+      console.log('dim');
+      toneIndex = baseToneKey + 6;
+      break;
+    }
+    case 'snow':
+    case 'mist': {
+      console.log('sus4');
+      toneIndex = baseToneKey + 5;
+      break;
+    }
+    default: {
+      return null;
+    }
+  }
+
+  const [tone, pitch] = getTonePitch(toneIndex, basePitch);
+  return `${TONES[tone]}${pitch}`;
+};
+
+/*
+  deg 0-90    ... m7 短7
+  deg 180-270 ... M7 長7
+  deg 90-180  ... 6  長6
+  deg 270-360 ... m6 短6
+  */
+const getToneByWind = ({ deg, speed, baseToneKey, basePitch}) => {
+  if (speed < 1.5) {
+    return null;
+  }
+  let toneIndex;
+  if (deg < 90) {
+    console.log('m7');
+    toneIndex = baseToneKey + 11;
+  } else
+  if (deg < 180) {
+    console.log('M6');
+    toneIndex = baseToneKey + 9;
+  } else
+  if (deg < 270) {
+    console.log('M7');
+    toneIndex = baseToneKey + 10;
+  } else {
+    console.log('m6');
+    toneIndex = baseToneKey + 8;
+  }
+  const [tone, pitch] = getTonePitch(toneIndex, basePitch);
+  return `${TONES[tone]}${pitch}`;
+}
+
+export const convertWeatherToTone = ({ weatherType, wind, baseToneKey, basePitch}) => {
+  const weatherTone = getToneByWeathrt({ weatherType, baseToneKey, basePitch});
+  const windTone = getToneByWind({...wind, baseToneKey, basePitch});
+  console.log('weatherTones:', [weatherTone, windTone]);
+  return [weatherTone, windTone].filter(Boolean);
+}
 
 let synth;
 

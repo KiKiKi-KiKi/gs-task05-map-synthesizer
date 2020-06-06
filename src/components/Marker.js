@@ -1,10 +1,11 @@
 import { convertToneByLatLng, testSounde } from '../synth';
-import getCurrentWeather, { WEATHER_ICON_PATH } from '../weather';
+import getCurrentWeather, { getWeatherIconPath } from '../weather';
 
-const getWeather = (marker) => async ({ lat, lng }) => {
+const getWeather = (marker, callback) => async ({ lat, lng }) => {
   const weatherData = await getCurrentWeather({ lat, lng });
   console.log(weatherData);
   marker._weather = weatherData;
+  callback(marker, weatherData);
   return weatherData;
 };
 
@@ -14,13 +15,17 @@ const markerPositionSound = ({ lat, lng }) => {
   testSounde(tones);
 };
 
-export const addMarkerEvents = ({ marker, onChange }) => {
-  marker._getWeather = getWeather(marker);
+export const addMarkerEvents = ({
+  marker,
+  onChangePosition,
+  onChangeWeather,
+}) => {
+  marker._getWeather = getWeather(marker, onChangeWeather);
 
   // drag Events
   marker.addListener('dragend', (e) => {
     console.log('dragend', e);
-    onChange({ marker: marker, position: e.latLng });
+    onChangePosition({ marker: marker, position: e.latLng });
     marker._getWeather({
       lat: e.latLng.lat(),
       lng: e.latLng.lng(),
@@ -40,7 +45,7 @@ export const addMarkerEvents = ({ marker, onChange }) => {
   });
 
   const [lat, lng] = [marker.position.lat(), marker.position.lng()];
-  marker._getWeather({lat, lng});
+  marker._getWeather({ lat, lng });
 };
 
 const Marker = ({ map, maps, position }) => {
@@ -60,7 +65,7 @@ const Marker = ({ map, maps, position }) => {
     const wind = marker._weather.wind;
     return `<div class="marker-info">
       <div>
-        <figure class="weather-icon"><img src=${WEATHER_ICON_PATH}${weather.icon}.png /></figure>
+        <figure class="weather-icon"><img src=${getWeatherIconPath(weather.icon)} /></figure>
         <span>${weather.main} (${weather.description})</span>
       </div>
       <div>

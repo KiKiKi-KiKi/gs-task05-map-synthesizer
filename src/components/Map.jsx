@@ -1,6 +1,6 @@
 import React, { useContext, useCallback, useEffect } from 'react';
 import MapContext from '../contexts/MapContext';
-import { ADD_MARKER, UPDATE_POSITION } from '../actions/marker';
+import { ADD_MARKER, UPDATE_POSITION, UPDATE_WEATHER } from '../actions/marker';
 import GoogleMapReact from 'google-map-react';
 import { MAP_API_KEY, DEFAULT_ZOOOM, MAP_STYLE } from '../config';
 import Marker, { addMarkerEvents } from './Marker';
@@ -16,6 +16,13 @@ export default function Map({ initialPosition }) {
     [dispatch],
   );
 
+  const onChangeWeather = useCallback(
+    (marker, weather) => {
+      dispatch({ type: UPDATE_WEATHER, marker, weather });
+    },
+    [dispatch],
+  );
+
   const addMarker = useCallback(
     ({ map, maps }) => (e) => {
       console.log(`Add Marker`, e);
@@ -26,9 +33,9 @@ export default function Map({ initialPosition }) {
         // onChange: onChangePosition,
       });
       dispatch({ type: ADD_MARKER, marker });
-      addMarkerEvents({ marker, onChange: onChangePosition });
+      addMarkerEvents({ marker, onChangePosition, onChangeWeather });
     },
-    [dispatch, onChangePosition],
+    [dispatch, onChangePosition, onChangeWeather],
   );
 
   // on Load Map
