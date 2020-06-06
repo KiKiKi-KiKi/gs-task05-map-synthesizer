@@ -20,3 +20,21 @@ cf.
 ## Tone.js
 
 https://github.com/Tonejs/Tone.js
+
+cf. 
+- https://qiita.com/i-ryo/items/340b9f3b791b7c2f7d18
+- https://www.i-ryo.com/entry/2019/05/21/222200
+- https://yonepiano.com/2019/03/23/post-58/
+
+#### code
+
+- https://www.daxter-music.jp/chord/c.html
+
+## Calculation distance
+
+```
+(x1, y1), (x2, y2)
+dist = SQRT( (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) )
+```
+
+- http://www.geisya.or.jp/~mwm48961/kou2/v_coord4.html
