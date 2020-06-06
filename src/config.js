@@ -8,6 +8,28 @@ export const DEFAULT_POSITION = {
 
 export const DEFAULT_ZOOOM = 3;
 
+// mint60
+export const COLORS = Object.freeze([
+  '#a1cdcf',
+  '#6cbac5',
+  '#e4b82b',
+  '#ee8f31',
+  '#f65234',
+  '#874c4e',
+]);
+
+export const LAT_MAX = 90;
+export const LNG_MAX = 180;
+
+export const getColorByLat = (lat) => {
+  const max = COLORS.length;
+  const index = Math.floor(lat / (LAT_MAX / max));
+  if (index > max) {
+    return COLORS[max - 1];
+  }
+  return COLORS[index];
+};
+
 export const MAP_STYLE = [
   {
     elementType: 'geometry',

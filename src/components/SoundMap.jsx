@@ -1,42 +1,30 @@
-import React, { useContext, useCallback, useMemo, useRef, useEffect } from 'react';
+import React, {
+  useContext,
+  useCallback,
+  useMemo,
+  useRef,
+  useEffect,
+} from 'react';
+import { getColorByLat, LAT_MAX, LNG_MAX } from '../config';
 import {
   convertPosition,
   convertLng,
   getPositionDistance,
-  getMaxDistance
+  getMaxDistance,
 } from '../geoUtils';
 import { getVolumeByWind } from '../synth';
 import MapContext from '../contexts/MapContext';
 
 const MELODY_TIME = 8 * 60 * 60;
 const PI2 = Math.PI * 2;
-const CANVAS_WIDTH = 180 * 2;
-const CANVAS_HEIGHT = 90;
+const CANVAS_WIDTH = LNG_MAX * 2;
+const CANVAS_HEIGHT = LAT_MAX;
 const SCALE = 10;
-// mint60
-const COLORS = Object.freeze([
-  '#a1cdcf',
-  '#6cbac5',
-  '#e4b82b',
-  '#ee8f31',
-  '#f65234',
-  '#874c4e',
-]);
 
 const canvasInit = (ctx) => {
   ctx.canvas.width = CANVAS_WIDTH * SCALE;
   ctx.canvas.height = CANVAS_HEIGHT * SCALE;
   return ctx;
-};
-
-const getColorByLat = (lat) => {
-  const max = COLORS.length;
-  const index = Math.floor(lat / (CANVAS_HEIGHT / max));
-
-  if (index > max) {
-    return COLORS[max - 1];
-  }
-  return COLORS[index];
 };
 
 const mappingMarkers = (ctx) => (markers) => {
@@ -85,7 +73,7 @@ export default function SoundMap() {
       const distance = getPositionDistance(prevPos, thisPos);
 
       prevMarker.distance = distance;
-      prevMarker.distancePar = Math.round(distance * 100 / maxDistance);
+      prevMarker.distancePar = Math.round((distance * 100) / maxDistance);
 
       return [...arr, prevMarker, _marker];
     }, []);
@@ -109,8 +97,8 @@ export default function SoundMap() {
           },
           position,
           distance: 0,
-        }
-      };
+        };
+      }
 
       // TODO: generate time & duration by pos & distance
 
@@ -141,9 +129,11 @@ export default function SoundMap() {
     mappingMarkers(getCanvas())(soundMap);
   }, [soundMap, getCanvas]);
 
-  return <>
-    <div className="sound-map">
-      <canvas className="sound-map-canvas" ref={canvasRef}></canvas>
-    </div>
-  </>;
+  return (
+    <>
+      <div className="sound-map">
+        <canvas className="sound-map-canvas" ref={canvasRef}></canvas>
+      </div>
+    </>
+  );
 }

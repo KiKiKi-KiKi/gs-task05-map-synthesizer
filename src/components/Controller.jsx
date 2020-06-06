@@ -31,6 +31,6 @@ export default function Controller() {
       <div className="control-body">
         <TabContent selected={selected} />
       </div>
-    </div >
+    </div>
   );
 }

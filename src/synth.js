@@ -106,32 +106,31 @@ const getTonePitch = (tone, pitch) => {
   mist    -> sus4
 */
 const getToneByWeathrt = ({ weatherType, baseToneKey, basePitch }) => {
-  console.log(weatherType);
   let toneIndex;
   switch (weatherType) {
     case 'sunny': {
-      console.log('Major 3');
+      console.log(weatherType, 'Major 3');
       toneIndex = baseToneKey + 4;
       break;
     }
     case 'cloudy': {
-      console.log('minor 3');
+      console.log(weatherType, 'minor 3');
       toneIndex = baseToneKey + 3;
       break;
     }
     case 'rain': {
-      console.log('aug');
+      console.log(weatherType, 'aug');
       toneIndex = baseToneKey + 8;
       break;
     }
     case 'thunder': {
-      console.log('dim');
+      console.log(weatherType, 'dim');
       toneIndex = baseToneKey + 6;
       break;
     }
     case 'snow':
     case 'mist': {
-      console.log('sus4');
+      console.log(weatherType, 'sus4');
       toneIndex = baseToneKey + 5;
       break;
     }
@@ -156,16 +155,16 @@ const getToneByWind = ({ deg, speed, baseToneKey, basePitch }) => {
   }
   let toneIndex;
   if (deg < 90) {
-    console.log('m7');
+    console.log(`wind ${deg}`, 'm7');
     toneIndex = baseToneKey + 11;
   } else if (deg < 180) {
-    console.log('M6');
+    console.log(`wind ${deg}`, 'M6');
     toneIndex = baseToneKey + 9;
   } else if (deg < 270) {
-    console.log('M7');
+    console.log(`wind ${deg}`, 'M7');
     toneIndex = baseToneKey + 10;
   } else {
-    console.log('m6');
+    console.log(`wind ${deg}`, 'm6');
     toneIndex = baseToneKey + 8;
   }
   const [tone, pitch] = getTonePitch(toneIndex, basePitch);
@@ -197,7 +196,7 @@ export const getVolumeByWind = (weather) => {
     return 1;
   }
 
-  return Math.floor(windSpeed / MAX_VOLUME_WIND_SPEED * 100) / 100;
+  return Math.floor((windSpeed / MAX_VOLUME_WIND_SPEED) * 100) / 100;
 };
 
 let synth;
@@ -216,10 +215,11 @@ const setSynth = () => {
   return synth;
 };
 
-export const testSounde = (tones) => {
+export const testSounde = (code) => {
   const synth = setSynth();
   Transport.stop();
-  synth.triggerAttackRelease(tones, '8n');
+  // code, time, velocity
+  synth.triggerAttackRelease(code, '8n', undefined, 0.5);
 };
 
 export const synthInit = () => setSynth();

@@ -29,8 +29,8 @@ export default function App() {
               {firstPos ? (
                 <Map initialPosition={firstPos} />
               ) : (
-                  <p>Loading...</p>
-                )}
+                <p>Loading...</p>
+              )}
             </div>
             <Controller />
           </SoundContext.Provider>

@@ -54,11 +54,11 @@ const Marker = ({ id, map, maps, position, onSound, onDelete }) => {
     map,
     draggable: true,
     icon: {
-      fillColor: '#21d4f6',
+      fillColor: '#f2caec',
       fillOpacity: 0.8,
       path: maps.SymbolPath.CIRCLE,
       scale: 10,
-      strokeColor: '#21d4f6',
+      strokeColor: '#f2caec',
       strokeWidth: 1.0,
     },
     label: {
