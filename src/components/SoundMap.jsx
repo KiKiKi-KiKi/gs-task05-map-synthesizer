@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from 'react';
 import { getColorByLat, LAT_MAX, LNG_MAX } from '../config';
+import { zeroPadding } from '../utils';
 import {
   convertPosition,
   convertLng,
@@ -15,11 +16,23 @@ import {
 import { getVolumeByWind } from '../synth';
 import MapContext from '../contexts/MapContext';
 
-const MELODY_TIME = 8 * 60 * 60;
+const MM = 60 * 60;
+const MELODY_TIME = 8 * MM;
 const PI2 = Math.PI * 2;
 const CANVAS_WIDTH = LNG_MAX * 2;
 const CANVAS_HEIGHT = LAT_MAX;
 const SCALE = 10;
+
+const zeroPaddingXX = zeroPadding(2);
+
+const getTimeByLng = (x) => {
+  const time = x * MELODY_TIME / CANVAS_WIDTH;
+  const _m = time % MM;
+  const m = Math.floor(time / MM);
+  const ss = zeroPaddingXX(Math.round(_m % 60));
+  const s = zeroPaddingXX(Math.floor(_m / 60));
+  return `${m}:${s}:${ss}`;
+};
 
 const canvasInit = (ctx) => {
   ctx.canvas.width = CANVAS_WIDTH * SCALE;
@@ -80,40 +93,28 @@ export default function SoundMap() {
 
     console.log(distanceList);
 
-    return distanceList.map((marker) => {
+    const soundMap = distanceList.map((marker) => {
       const code = marker.code;
       const position = convertPosition(marker.position);
       const volume = getVolumeByWind(marker.weather);
 
-      // 単音
-      if (!maxDistance) {
-        return {
-          id: marker.id,
-          melody: {
-            time: '1:0:0',
-            note: code,
-            duration: '8n',
-            velocity: volume,
-          },
-          position,
-          distance: 0,
-        };
-      }
-
-      // TODO: generate time & duration by pos & distance
+      const time = getTimeByLng(position[0]);
+      // TODO: generate duration by distance
+      const duration = !marker.distance ? '8n' : '16n';
 
       return {
         id: marker.id,
         melody: {
-          time: '1:0:0',
+          time: time,
           note: code,
-          duration: '8n',
+          duration: duration,
           velocity: volume,
         },
         position,
-        distance: 0,
+        distance: marker.distance || 0,
       };
     });
+    return soundMap;
   }, [markers]);
 
   console.log('sorted', soundMap);

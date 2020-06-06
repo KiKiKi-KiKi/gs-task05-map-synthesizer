@@ -19,3 +19,7 @@ export const getDefaultPosition = async () => {
     return DEFAULT_POSITION;
   }
 };
+
+export const zeroPadding = (digits = 2) => (num) => {
+  return num.toString().padStart(digits, 0);
+};
