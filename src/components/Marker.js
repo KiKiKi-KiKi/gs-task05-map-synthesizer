@@ -48,7 +48,7 @@ export const addMarkerEvents = ({
   marker._getWeather({ lat, lng });
 };
 
-const Marker = ({ id, map, maps, position, onSound }) => {
+const Marker = ({ id, map, maps, position, onSound, onDelete }) => {
   const marker = new maps.Marker({
     position: position,
     map,
@@ -80,9 +80,9 @@ const Marker = ({ id, map, maps, position, onSound }) => {
     const wind = marker._weather.wind;
     return `<div class="marker-info">
       <div>
-        <figure class="weather-icon"><img src=${getWeatherIconPath(
-          weather.icon,
-        )} /></figure>
+        <figure class="weather-icon">
+          <img src=${getWeatherIconPath(weather.icon)} />
+        </figure>
         <span>${weather.main} (${weather.description})</span>
       </div>
       <div>
@@ -94,7 +94,7 @@ const Marker = ({ id, map, maps, position, onSound }) => {
   };
 
   // show info window
-  marker.addListener('click', (e) => {
+  marker.addListener('click', () => {
     // console.log(marker, e);
     if (!openWindow) {
       openWindow = true;
@@ -117,6 +117,13 @@ const Marker = ({ id, map, maps, position, onSound }) => {
     indoWindow.close();
     indoWindow = null;
     openWindow = false;
+  });
+
+  marker.addListener('rightclick', () => {
+    if (!window.confirm(`Delete Marker-${id}?`)) {
+      return false;
+    }
+    onDelete(id);
   });
 
   const [lat, lng] = [marker.position.lat(), marker.position.lng()];

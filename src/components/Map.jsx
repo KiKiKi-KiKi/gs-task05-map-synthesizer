@@ -1,5 +1,10 @@
 import React, { useContext, useCallback, useEffect, useRef } from 'react';
-import { ADD_MARKER, UPDATE_POSITION, UPDATE_WEATHER } from '../actions/marker';
+import {
+  ADD_MARKER,
+  UPDATE_POSITION,
+  UPDATE_WEATHER,
+  REMOVE_MARKER,
+} from '../actions/marker';
 import { SOUND } from '../actions/sound';
 import MapContext from '../contexts/MapContext';
 import SoundContext from '../contexts/SoundContext';
@@ -42,6 +47,13 @@ export default function Map({ initialPosition }) {
     [soundDispatch],
   );
 
+  const onDeleteMarker = useCallback(
+    (id) => {
+      dispatch({ type: REMOVE_MARKER, id });
+    },
+    [dispatch],
+  );
+
   const getMarkerID = useCallback(() => {
     const markers = markersRef.current;
     const len = markers.length;
@@ -58,11 +70,19 @@ export default function Map({ initialPosition }) {
         maps,
         position: e.latLng,
         onSound,
+        onDelete: onDeleteMarker,
       });
       dispatch({ type: ADD_MARKER, marker, id: markerID });
       addMarkerEvents({ marker, onChangePosition, onChangeWeather });
     },
-    [dispatch, getMarkerID, onChangePosition, onChangeWeather, onSound],
+    [
+      dispatch,
+      getMarkerID,
+      onChangePosition,
+      onChangeWeather,
+      onSound,
+      onDeleteMarker,
+    ],
   );
 
   // on Load Map
