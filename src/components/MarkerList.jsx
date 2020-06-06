@@ -3,6 +3,7 @@ import MapContext from '../contexts/MapContext';
 import { REMOVE_MARKER } from '../actions/marker';
 import { getWeatherIconPath } from '../weather';
 import { testSounde } from '../synth';
+import LoadingIcon from './LoadingIcon';
 
 const Weather = ({ weather, wind }) => {
   return (
@@ -30,7 +31,7 @@ const MarkerListItem = ({
   onRemove,
   onSound,
 }) => {
-  const weatherDOM = weather && <Weather {...weather} />;
+  const weatherDOM = weather ? <Weather {...weather} /> : <LoadingIcon />;
 
   return (
     <li className="marker-list-item">
@@ -44,10 +45,10 @@ const MarkerListItem = ({
         <div className="code">[{code.join(', ')}]</div>
       </div>
       <div className="actions">
-        <button className="sounds-btn" onClick={onSound}>
+        <button className="btn sounds-btn" onClick={onSound}>
           Sound
         </button>
-        <button className="remove-btn" onClick={onRemove}>
+        <button className="btn remove-btn" onClick={onRemove}>
           Remove
         </button>
       </div>
