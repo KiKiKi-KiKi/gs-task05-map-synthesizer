@@ -105,7 +105,7 @@ const getTonePitch = (tone, pitch) => {
   snow    -> sus4 3音半音上げ
   mist    -> sus4
 */
-const getToneByWeathrt = ({ weatherType, baseToneKey, basePitch}) => {
+const getToneByWeathrt = ({ weatherType, baseToneKey, basePitch }) => {
   console.log(weatherType);
   let toneIndex;
   switch (weatherType) {
@@ -150,7 +150,7 @@ const getToneByWeathrt = ({ weatherType, baseToneKey, basePitch}) => {
   deg 90-180  ... 6  長6
   deg 270-360 ... m6 短6
   */
-const getToneByWind = ({ deg, speed, baseToneKey, basePitch}) => {
+const getToneByWind = ({ deg, speed, baseToneKey, basePitch }) => {
   if (speed < 1.5) {
     return null;
   }
@@ -158,12 +158,10 @@ const getToneByWind = ({ deg, speed, baseToneKey, basePitch}) => {
   if (deg < 90) {
     console.log('m7');
     toneIndex = baseToneKey + 11;
-  } else
-  if (deg < 180) {
+  } else if (deg < 180) {
     console.log('M6');
     toneIndex = baseToneKey + 9;
-  } else
-  if (deg < 270) {
+  } else if (deg < 270) {
     console.log('M7');
     toneIndex = baseToneKey + 10;
   } else {
@@ -172,14 +170,19 @@ const getToneByWind = ({ deg, speed, baseToneKey, basePitch}) => {
   }
   const [tone, pitch] = getTonePitch(toneIndex, basePitch);
   return `${TONES[tone]}${pitch}`;
-}
+};
 
-export const convertWeatherToTone = ({ weatherType, wind, baseToneKey, basePitch}) => {
-  const weatherTone = getToneByWeathrt({ weatherType, baseToneKey, basePitch});
-  const windTone = getToneByWind({...wind, baseToneKey, basePitch});
+export const convertWeatherToTone = ({
+  weatherType,
+  wind,
+  baseToneKey,
+  basePitch,
+}) => {
+  const weatherTone = getToneByWeathrt({ weatherType, baseToneKey, basePitch });
+  const windTone = getToneByWind({ ...wind, baseToneKey, basePitch });
   console.log('weatherTones:', [weatherTone, windTone]);
   return [weatherTone, windTone].filter(Boolean);
-}
+};
 
 let synth;
 

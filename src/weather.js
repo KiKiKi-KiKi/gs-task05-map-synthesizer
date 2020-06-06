@@ -5,7 +5,7 @@ export const WEATHER_ICON_PATH = 'http://openweathermap.org/img/w/';
 
 export const getWeatherIconPath = (icon) => {
   return `${WEATHER_ICON_PATH}${icon}.png`;
-}
+};
 
 const CURRNET_WEATHER_DATA = `http://api.openweathermap.org/data/2.5/weather?appid=${WEATHER_API_KEY}`;
 

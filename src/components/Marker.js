@@ -65,7 +65,9 @@ const Marker = ({ map, maps, position }) => {
     const wind = marker._weather.wind;
     return `<div class="marker-info">
       <div>
-        <figure class="weather-icon"><img src=${getWeatherIconPath(weather.icon)} /></figure>
+        <figure class="weather-icon"><img src=${getWeatherIconPath(
+          weather.icon,
+        )} /></figure>
         <span>${weather.main} (${weather.description})</span>
       </div>
       <div>

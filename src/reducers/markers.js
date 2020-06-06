@@ -4,8 +4,12 @@ import {
   REMOVE_MARKER,
   UPDATE_WEATHER,
 } from '../actions/marker';
-import { getToneDataByLatLng, getCodeByToneKeys, convertWeatherToTone } from '../synth';
-import { getWeatherTypeByIconCode } from '../weather'
+import {
+  getToneDataByLatLng,
+  getCodeByToneKeys,
+  convertWeatherToTone,
+} from '../synth';
+import { getWeatherTypeByIconCode } from '../weather';
 
 const reducer = (state = [], action) => {
   switch (action.type) {
@@ -79,7 +83,11 @@ const reducer = (state = [], action) => {
       const weather = action.weather;
       const weatherType = getWeatherTypeByIconCode(weather.weather[0].icon);
       const wind = weather.wind;
-      const weatherCode = convertWeatherToTone({ weatherType, wind, ...codeData});
+      const weatherCode = convertWeatherToTone({
+        weatherType,
+        wind,
+        ...codeData,
+      });
 
       cloneState[index] = {
         ...data,

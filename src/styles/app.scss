@@ -23,8 +23,18 @@
 }
 
 .marker-list-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   .position {
     display: flex;
     flex-direction: column;
   }
+}
+.marker-data {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
