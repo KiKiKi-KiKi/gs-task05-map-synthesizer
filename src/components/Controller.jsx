@@ -13,6 +13,45 @@ function TabContent({ selected }) {
   return <SoundMap />;
 }
 
+function PlayBtn({ onClick }) {
+  return (
+    <button className="btn play-btn" onClick={onClick}>
+      PLAY
+    </button>
+  );
+}
+
+function StopBtn({ onClick }) {
+  return (
+    <button className="btn stop-btn" onClick={onClick}>
+      STOP
+    </button>
+  );
+}
+
+function Player({ melody }) {
+  const [isPlay, setPlay] = useState(false);
+
+  console.log('melody', melody);
+
+  const onClickHandler = useCallback(() => {
+    setPlay((isPlay) => {
+      if (isPlay) {
+        console.info('STOP MUSIC');
+      } else {
+        console.info('START MUSIC');
+      }
+      return !isPlay;
+    });
+  }, []);
+
+  return isPlay ? (
+    <StopBtn onClick={onClickHandler} />
+  ) : (
+    <PlayBtn onClick={onClickHandler} />
+  );
+}
+
 export default function Controller() {
   const [melody, dispatch] = useReducer(reducer);
   const [selected, setSelected] = useState(false);
@@ -39,6 +78,7 @@ export default function Controller() {
         <button className={tab2Class} onClick={onChange(selected)}>
           Sound Map
         </button>
+        {selected && <Player melody={melody} />}
       </div>
       <div className="control-body">
         <MelodyContext.Provider value={{ dispatch }}>
