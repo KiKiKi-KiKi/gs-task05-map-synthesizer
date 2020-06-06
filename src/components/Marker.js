@@ -48,12 +48,14 @@ export const addMarkerEvents = ({
   marker._getWeather({ lat, lng });
 };
 
-const Marker = ({ map, maps, position, onSound }) => {
+const Marker = ({ id, map, maps, position, onSound }) => {
   const marker = new maps.Marker({
     position: position,
     map,
     draggable: true,
   });
+
+  marker._id = id;
 
   let indoWindow = null;
   let openWindow = false;

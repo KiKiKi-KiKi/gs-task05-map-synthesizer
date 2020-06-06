@@ -42,19 +42,27 @@ export default function Map({ initialPosition }) {
     [soundDispatch],
   );
 
+  const getMarkerID = useCallback(() => {
+    const markers = markersRef.current;
+    const len = markers.length;
+    return len ? markers[len - 1].id + 1 : 0;
+  }, [markersRef]);
+
   const addMarker = useCallback(
     ({ map, maps }) => (e) => {
       console.log(`Add Marker`, e);
+      const markerID = getMarkerID();
       const marker = Marker({
+        id: markerID,
         map,
         maps,
         position: e.latLng,
         onSound,
       });
-      dispatch({ type: ADD_MARKER, marker });
+      dispatch({ type: ADD_MARKER, marker, id: markerID });
       addMarkerEvents({ marker, onChangePosition, onChangeWeather });
     },
-    [dispatch, onChangePosition, onChangeWeather, onSound],
+    [dispatch, getMarkerID, onChangePosition, onChangeWeather, onSound],
   );
 
   // on Load Map

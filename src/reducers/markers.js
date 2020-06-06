@@ -14,15 +14,13 @@ import { getWeatherTypeByIconCode } from '../weather';
 const reducer = (state = [], action) => {
   switch (action.type) {
     case ADD_MARKER: {
-      console.log(ADD_MARKER, state.length);
+      console.log(ADD_MARKER, state.length, action.id);
       const marker = action.marker;
-      const len = state.length;
-      const id = len ? state[len - 1].id + 1 : 0;
+      const id = action.id;
       const position = {
         lat: marker.position.lat(),
         lng: marker.position.lng(),
       };
-      marker._id = id;
       const codeData = getToneDataByLatLng(position);
       const code = getCodeByToneKeys(codeData);
 
