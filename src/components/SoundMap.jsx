@@ -28,7 +28,7 @@ const canvasInit = (ctx) => {
 };
 
 const mappingMarkers = (ctx) => (markers) => {
-  ctx.clearRect(0, 0, ctx.canvasWidth, ctx.canvasWeight);
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   markers.forEach((marker) => {
     const [x, y] = marker.position;
