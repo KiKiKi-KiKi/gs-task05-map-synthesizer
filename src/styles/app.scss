@@ -9,11 +9,52 @@
   height: 80vh;
 }
 
-.marker-list-container {
+.conttoller {
   color: #f1f1f1;
-  background-color: #2e2827;
+  background-color: #272a2e;
   width: 100vw;
   height: 20vh;
+}
+
+.tab-controller {
+  font-size: 93%;
+  display: flex;
+  justify-content: start;
+  border-bottom: 1px solid #999ea2;
+}
+
+.tab-btn {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1em;
+  font-weight: 500;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  border: none;
+  outline: none;
+  line-height: 1.5;
+  padding: .25rem .5rem;
+  background-color: transparent;
+  transition:
+    color .15s ease-in-out,
+    background-color .15s ease-in-out;
+
+  &:hover {
+    background-color: #111416;
+  }
+
+  &.active {
+    color: #b2b9bb;
+    background-color: #111416;
+  }
+}
+
+.tab-btn + .tab-btn {
+  border-left: 1px solid #444e4e;
+}
+
+.control-body {
   overflow-y: scroll;
 }
 
@@ -59,6 +100,7 @@
 }
 
 .btn {
+  cursor: pointer;
   color: #fff;
   background-color: #007bff;
   border: 1px solid #007bff;
@@ -71,6 +113,7 @@
   padding: .375rem .75rem;
   line-height: 1.5;
   border-radius: .25rem;
+  outline: none;
   transition:
     color .15s ease-in-out,
     background-color .15s ease-in-out,

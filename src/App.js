@@ -4,8 +4,8 @@ import MapContext from './contexts/MapContext';
 import SoundContext from './contexts/SoundContext';
 import reducer from './reducers/markers';
 import { default as soundDispatch } from './dispatchers/sound';
+import Controller from './components/Controller';
 import Map from './components/Map';
-import MarkerList from './components/MarkerList';
 import './styles/app.scss';
 
 export default function App() {
@@ -29,12 +29,10 @@ export default function App() {
               {firstPos ? (
                 <Map initialPosition={firstPos} />
               ) : (
-                <p>Loading...</p>
-              )}
+                  <p>Loading...</p>
+                )}
             </div>
-            <div className="marker-list-container">
-              <MarkerList />
-            </div>
+            <Controller />
           </SoundContext.Provider>
         </MapContext.Provider>
       </div>
