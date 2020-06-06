@@ -184,6 +184,22 @@ export const convertWeatherToTone = ({
   return [weatherTone, windTone].filter(Boolean);
 };
 
+// wind speed -> volume
+const MAX_VOLUME_WIND_SPEED = 10;
+export const getVolumeByWind = (weather) => {
+  if (!weather || !weather.wind) {
+    return 1;
+  }
+
+  const windSpeed = weather.wind.speed;
+
+  if (windSpeed > MAX_VOLUME_WIND_SPEED) {
+    return 1;
+  }
+
+  return Math.floor(windSpeed / MAX_VOLUME_WIND_SPEED * 100) / 100;
+};
+
 let synth;
 
 const setSynth = () => {

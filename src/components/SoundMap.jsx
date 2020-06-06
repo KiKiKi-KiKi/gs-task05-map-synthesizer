@@ -1,66 +1,63 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useCallback, useMemo, useRef, useEffect } from 'react';
+import {
+  convertPosition,
+  convertLng,
+  getPositionDistance,
+  getMaxDistance
+} from '../geoUtils';
+import { getVolumeByWind } from '../synth';
 import MapContext from '../contexts/MapContext';
 
-const convertLng = (lng) => {
-  if (lng > 0) {
-    return lng;
-  }
-  return 180 * 2 + lng;
+const MELODY_TIME = 8 * 60 * 60;
+const PI2 = Math.PI * 2;
+const CANVAS_WIDTH = 180 * 2;
+const CANVAS_HEIGHT = 90;
+const SCALE = 10;
+// mint60
+const COLORS = Object.freeze([
+  '#a1cdcf',
+  '#6cbac5',
+  '#e4b82b',
+  '#ee8f31',
+  '#f65234',
+  '#874c4e',
+]);
+
+const canvasInit = (ctx) => {
+  ctx.canvas.width = CANVAS_WIDTH * SCALE;
+  ctx.canvas.height = CANVAS_HEIGHT * SCALE;
+  return ctx;
 };
 
-const convertLant = (lat) => {
-  if (lat > 0) {
-    return lat;
+const getColorByLat = (lat) => {
+  const max = COLORS.length;
+  const index = Math.floor(lat / (CANVAS_HEIGHT / max));
+
+  if (index > max) {
+    return COLORS[max - 1];
   }
-  return 90 * 2 + lat;
+  return COLORS[index];
 };
 
-const POINT = 1000;
+const mappingMarkers = (ctx) => (markers) => {
+  ctx.clearRect(0, 0, ctx.canvasWidth, ctx.canvasWeight);
 
-// return [x, y];
-const convertPosition = ({ lat, lng }) => {
-  const x = Math.round(convertLng(lng) * POINT) / POINT;
-  const y = Math.round(convertLant(lat) * POINT) / POINT;
-  return [x, y];
-}
+  markers.forEach((marker) => {
+    const [x, y] = marker.position;
+    const r = marker.melody.velocity * 2;
 
-// 座標から２点間の距離を計算する
-const getPositionDistance = (pos1, pos2) => {
-  return Math.round(
-    Math.sqrt(
-      (pos2.lat - pos1.lat) ** 2 +
-      (convertLng(pos2.lng) - convertLng(pos1.lng)) ** 2,
-    ),
-  );
-};
-
-const getMaxDistance = (markers) => {
-  const len = markers.length;
-  if (len < 2) {
-    return null;
-  }
-  const firstPos = markers[0].position;
-  const endPos = markers[len - 1].position;
-  console.log(markers[0].id, markers[len - 1].id);
-  return getPositionDistance(firstPos, endPos);
-};
-
-const getVolumeByWind = (weather) => {
-  if (!weather || !weather.wind) {
-    return 1;
-  }
-
-  const windSpeed = weather.wind.speed;
-
-  if (windSpeed > 5) {
-    return 1;
-  }
-
-  return Math.floor(windSpeed / 5 * 100) / 100;
+    ctx.fillStyle = getColorByLat(y);
+    ctx.beginPath();
+    ctx.arc(x * 10, y * 10, r * 10, 0, PI2);
+    ctx.fill();
+  });
 };
 
 export default function SoundMap() {
   const { markers } = useContext(MapContext);
+  const canvasRef = useRef(null);
+  const ctxRef = useRef(null);
+  const getCanvas = useCallback(() => ctxRef.current, [canvasRef]);
 
   // marker を lng 順に並べる
   const soundMap = useMemo(() => {
@@ -133,8 +130,20 @@ export default function SoundMap() {
 
   console.log('sorted', soundMap);
 
-  return (
-    <>
-    </>
-  );
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctxRef.current = canvasInit(ctx);
+  }, []);
+
+  useEffect(() => {
+    // mapping marker to canvas
+    mappingMarkers(getCanvas())(soundMap);
+  }, [soundMap, getCanvas]);
+
+  return <>
+    <div className="sound-map">
+      <canvas className="sound-map-canvas" ref={canvasRef}></canvas>
+    </div>
+  </>;
 }
