@@ -2,6 +2,7 @@ import React, { useContext, useMemo, useCallback } from 'react';
 import MapContext from '../contexts/MapContext';
 import { REMOVE_MARKER } from '../actions/marker';
 import { getWeatherIconPath } from '../weather';
+import { testSounde } from '../synth';
 
 const Weather = ({ weather, wind }) => {
   return (
@@ -23,12 +24,12 @@ const Weather = ({ weather, wind }) => {
 
 const MarkerListItem = ({
   id,
-  onRemove,
   position: { lat, lng },
   code,
   weather,
+  onRemove,
+  onSound,
 }) => {
-  console.log(weather);
   const weatherDOM = weather && <Weather {...weather} />;
 
   return (
@@ -43,6 +44,9 @@ const MarkerListItem = ({
         <div className="code">[{code.join(', ')}]</div>
       </div>
       <div className="actions">
+        <button className="sounds-btn" onClick={onSound}>
+          Sound
+        </button>
         <button className="remove-btn" onClick={onRemove}>
           Remove
         </button>
@@ -62,12 +66,15 @@ export default function MarkerList() {
     [dispatch],
   );
 
+  const onSound = useCallback((codes) => () => testSounde(codes), []);
+
   const markerList = useMemo(() => {
     const reverse = [...markers].reverse();
     return reverse.map((marker) => (
       <MarkerListItem
         key={marker.id}
         onRemove={onRemove(marker.id)}
+        onSound={onSound(marker.code)}
         {...marker}
       />
     ));
