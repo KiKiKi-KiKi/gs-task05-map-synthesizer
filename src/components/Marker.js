@@ -53,6 +53,19 @@ const Marker = ({ id, map, maps, position, onSound }) => {
     position: position,
     map,
     draggable: true,
+    icon: {
+      fillColor: '#21d4f6',
+      fillOpacity: 0.8,
+      path: maps.SymbolPath.CIRCLE,
+      scale: 10,
+      strokeColor: '#21d4f6',
+      strokeWidth: 1.0,
+    },
+    label: {
+      text: id.toString(),
+      color: '#ffffff',
+      fontSize: '16px',
+    },
   });
 
   marker._id = id;
