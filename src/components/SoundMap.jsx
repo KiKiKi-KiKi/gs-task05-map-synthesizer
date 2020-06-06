@@ -13,6 +13,8 @@ import {
   getPositionDistance,
   getMaxDistance,
 } from '../geoUtils';
+import MelodyContext from '../contexts/MelodyContext';
+import { SET_MELODY } from '../actions/melody';
 import { getVolumeByWind } from '../synth';
 import MapContext from '../contexts/MapContext';
 
@@ -26,7 +28,7 @@ const SCALE = 10;
 const zeroPaddingXX = zeroPadding(2);
 
 const getTimeByLng = (x) => {
-  const time = x * MELODY_TIME / CANVAS_WIDTH;
+  const time = (x * MELODY_TIME) / CANVAS_WIDTH;
   const _m = time % MM;
   const m = Math.floor(time / MM);
   const ss = zeroPaddingXX(Math.round(_m % 60));
@@ -57,9 +59,10 @@ const mappingMarkers = (ctx) => (markers) => {
 
 export default function SoundMap() {
   const { markers } = useContext(MapContext);
+  const { dispatch } = useContext(MelodyContext);
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
-  const getCanvas = useCallback(() => ctxRef.current, [canvasRef]);
+  const getCanvas = useCallback(() => ctxRef.current, []);
 
   // marker を lng 順に並べる
   const soundMap = useMemo(() => {
@@ -92,7 +95,7 @@ export default function SoundMap() {
       return [...arr, prevMarker, _marker];
     }, []);
 
-    console.log(distanceList);
+    // console.log(distanceList);
 
     const soundMap = distanceList.map((marker) => {
       const code = marker.code;
@@ -115,10 +118,11 @@ export default function SoundMap() {
         distance: marker.distance || 0,
       };
     });
+
     return soundMap;
   }, [markers]);
 
-  console.log('sorted', soundMap);
+  // console.log('sorted', soundMap);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -129,7 +133,10 @@ export default function SoundMap() {
   useEffect(() => {
     // mapping marker to canvas
     mappingMarkers(getCanvas())(soundMap);
-  }, [soundMap, getCanvas]);
+
+    const melodyLine = soundMap.map((data) => data.melody);
+    dispatch({ type: SET_MELODY, melody: melodyLine });
+  }, [soundMap, getCanvas, dispatch]);
 
   return (
     <>

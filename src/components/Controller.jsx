@@ -1,4 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useReducer } from 'react';
+import MelodyContext from '../contexts/MelodyContext';
+import reducer from '../reducers/melody';
 import MarkerList from './MarkerList';
 import SoundMap from './SoundMap';
 
@@ -12,6 +14,7 @@ function TabContent({ selected }) {
 }
 
 export default function Controller() {
+  const [melody, dispatch] = useReducer(reducer);
   const [selected, setSelected] = useState(false);
   const onChange = useCallback(() => setSelected((select) => !select), []);
 
@@ -29,7 +32,9 @@ export default function Controller() {
         </button>
       </div>
       <div className="control-body">
-        <TabContent selected={selected} />
+        <MelodyContext.Provider value={{ dispatch }}>
+          <TabContent selected={selected} />
+        </MelodyContext.Provider>
       </div>
     </div>
   );
