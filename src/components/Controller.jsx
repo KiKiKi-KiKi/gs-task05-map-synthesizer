@@ -16,7 +16,16 @@ function TabContent({ selected }) {
 export default function Controller() {
   const [melody, dispatch] = useReducer(reducer);
   const [selected, setSelected] = useState(false);
-  const onChange = useCallback(() => setSelected((select) => !select), []);
+  const onChange = useCallback(
+    (isActive) => () => {
+      if (isActive) {
+        return false;
+      }
+      // TODO: stop music
+      setSelected((select) => !select);
+    },
+    [],
+  );
 
   const cx = [...TAB_CLASSES];
   const [tab1Class, tab2Class] = selected ? cx.reverse() : cx;
@@ -24,10 +33,10 @@ export default function Controller() {
   return (
     <div className="conttoller">
       <div className="tab-controller">
-        <button className={tab1Class} onClick={onChange}>
+        <button className={tab1Class} onClick={onChange(!selected)}>
           List
         </button>
-        <button className={tab2Class} onClick={onChange}>
+        <button className={tab2Class} onClick={onChange(selected)}>
           Sound Map
         </button>
       </div>

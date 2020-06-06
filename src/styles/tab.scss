@@ -21,10 +21,12 @@
   transition: color .15s ease-in-out, background-color .15s ease-in-out;
 
   &:hover {
+    color: #b2b9bb;
     background-color: #111416;
   }
 
   &.active {
+    cursor: default;
     color: #b2b9bb;
     background-color: #111416;
   }
