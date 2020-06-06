@@ -45,11 +45,12 @@ const mappingMarkers = (ctx) => (markers) => {
 
   markers.forEach((marker) => {
     const [x, y] = marker.position;
-    const r = marker.melody.velocity * 2;
+    const r = marker.melody.velocity * 4;
 
+    ctx.globalAlpha = 0.5;
     ctx.fillStyle = getColorByLat(y);
     ctx.beginPath();
-    ctx.arc(x * 10, y * 10, r * 10, 0, PI2);
+    ctx.arc(x * 10, y * 10, r * 20, 0, PI2);
     ctx.fill();
   });
 };
