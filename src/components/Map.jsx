@@ -1,6 +1,8 @@
-import React, { useContext, useCallback, useEffect } from 'react';
-import MapContext from '../contexts/MapContext';
+import React, { useContext, useCallback, useEffect, useRef } from 'react';
 import { ADD_MARKER, UPDATE_POSITION, UPDATE_WEATHER } from '../actions/marker';
+import { SOUND } from '../actions/sound';
+import MapContext from '../contexts/MapContext';
+import SoundContext from '../contexts/SoundContext';
 import GoogleMapReact from 'google-map-react';
 import { MAP_API_KEY, DEFAULT_ZOOOM, MAP_STYLE } from '../config';
 import Marker, { addMarkerEvents } from './Marker';
@@ -8,6 +10,10 @@ import { synthInit } from '../synth';
 
 export default function Map({ initialPosition }) {
   const { markers, dispatch } = useContext(MapContext);
+  const { soundDispatch } = useContext(SoundContext);
+
+  // React 外の marker に渡している state が更新されないので ref object に格納して useEffect 内で更新する
+  const markersRef = useRef(markers);
 
   const onChangePosition = useCallback(
     ({ marker, position }) => {
@@ -23,6 +29,19 @@ export default function Map({ initialPosition }) {
     [dispatch],
   );
 
+  const onSound = useCallback(
+    (markerID) => {
+      if (markerID === undefined || markerID === null) {
+        return;
+      }
+      const marker = markersRef.current.find(
+        (marker) => marker.id === markerID,
+      );
+      soundDispatch({ type: SOUND, code: marker.code });
+    },
+    [soundDispatch],
+  );
+
   const addMarker = useCallback(
     ({ map, maps }) => (e) => {
       console.log(`Add Marker`, e);
@@ -30,12 +49,12 @@ export default function Map({ initialPosition }) {
         map,
         maps,
         position: e.latLng,
-        // onChange: onChangePosition,
+        onSound,
       });
       dispatch({ type: ADD_MARKER, marker });
       addMarkerEvents({ marker, onChangePosition, onChangeWeather });
     },
-    [dispatch, onChangePosition, onChangeWeather],
+    [dispatch, onChangePosition, onChangeWeather, onSound],
   );
 
   // on Load Map
@@ -55,6 +74,10 @@ export default function Map({ initialPosition }) {
   useEffect(() => {
     synthInit();
   }, []);
+
+  useEffect(() => {
+    markersRef.current = markers;
+  }, [markers]);
 
   console.log(markers);
 

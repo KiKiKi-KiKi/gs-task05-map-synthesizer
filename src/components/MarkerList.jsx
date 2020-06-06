@@ -78,7 +78,7 @@ export default function MarkerList() {
         {...marker}
       />
     ));
-  }, [markers, onRemove]);
+  }, [markers, onRemove, onSound]);
 
   return <ul className="marker-list">{markerList}</ul>;
 }

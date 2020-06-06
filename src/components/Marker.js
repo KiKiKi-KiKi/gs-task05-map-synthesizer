@@ -3,7 +3,7 @@ import getCurrentWeather, { getWeatherIconPath } from '../weather';
 
 const getWeather = (marker, callback) => async ({ lat, lng }) => {
   const weatherData = await getCurrentWeather({ lat, lng });
-  console.log(weatherData);
+  // console.log(weatherData);
   marker._weather = weatherData;
   callback(marker, weatherData);
   return weatherData;
@@ -11,7 +11,7 @@ const getWeather = (marker, callback) => async ({ lat, lng }) => {
 
 const markerPositionSound = ({ lat, lng }) => {
   const tones = convertToneByLatLng({ lat, lng });
-  console.log(tones);
+  console.log('marker position tone:', tones);
   testSounde(tones);
 };
 
@@ -24,7 +24,7 @@ export const addMarkerEvents = ({
 
   // drag Events
   marker.addListener('dragend', (e) => {
-    console.log('dragend', e);
+    // console.log('dragend', e);
     onChangePosition({ marker: marker, position: e.latLng });
     marker._getWeather({
       lat: e.latLng.lat(),
@@ -39,7 +39,7 @@ export const addMarkerEvents = ({
     timer = setTimeout(() => {
       const lat = e.latLng.lat();
       const lng = e.latLng.lng();
-      console.log('on Drag', lat, lng);
+      // console.log('on Drag', lat, lng);
       markerPositionSound({ lat, lng });
     }, 10);
   });
@@ -48,7 +48,7 @@ export const addMarkerEvents = ({
   marker._getWeather({ lat, lng });
 };
 
-const Marker = ({ map, maps, position }) => {
+const Marker = ({ map, maps, position, onSound }) => {
   const marker = new maps.Marker({
     position: position,
     map,
@@ -80,13 +80,14 @@ const Marker = ({ map, maps, position }) => {
 
   // show info window
   marker.addListener('click', (e) => {
-    console.log(marker, e);
+    // console.log(marker, e);
     if (!openWindow) {
       openWindow = true;
       indoWindow = new maps.InfoWindow({
         content: getWindowContent(marker),
       });
       indoWindow.open(map, marker);
+      onSound(marker._id);
     } else {
       indoWindow.close();
       indoWindow = null;
