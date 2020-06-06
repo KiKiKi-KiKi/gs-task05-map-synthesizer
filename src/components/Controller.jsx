@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import MarkerList from './MarkerList';
+import SoundMap from './SoundMap';
 
 const TAB_CLASSES = ['tab-btn active', 'tab-btn'];
 
@@ -7,7 +8,7 @@ function TabContent({ selected }) {
   if (!selected) {
     return <MarkerList />;
   }
-  return null;
+  return <SoundMap />;
 }
 
 export default function Controller() {
