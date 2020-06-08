@@ -18,12 +18,14 @@ import { SET_MELODY } from '../actions/melody';
 import { getVolumeByWind } from '../synth';
 import MapContext from '../contexts/MapContext';
 
-const MM = 60 * 60;
-const MELODY_TIME = 8 * MM;
 const PI2 = Math.PI * 2;
 const CANVAS_WIDTH = LNG_MAX * 2;
 const CANVAS_HEIGHT = LAT_MAX;
 const SCALE = 10;
+
+/*
+const MM = 60 * 60;
+const MELODY_TIME = 8 * MM;
 
 const zeroPaddingXX = zeroPadding(2);
 
@@ -34,6 +36,19 @@ const getTimeByLng = (x) => {
   const ss = zeroPaddingXX(Math.round(_m % 60));
   const s = zeroPaddingXX(Math.floor(_m / 60));
   return `${m}:${s}:${ss}`;
+};
+*/
+
+const SECTIONS = 8; // 8 章節
+const BEAT = 64; // 64 分音符換算
+const SECTION_PAR_POS = (LNG_MAX * 2) / SECTIONS; // 1 楽章辺りの長さ
+
+const getSectionBeetByLng = (x) => {
+  const section = Math.floor(x / SECTION_PAR_POS);
+  const beatPost = Math.round(
+    ((x - section * SECTION_PAR_POS) * BEAT) / SECTION_PAR_POS,
+  );
+  return [section, beatPost];
 };
 
 const canvasInit = (ctx) => {
@@ -66,6 +81,10 @@ export default function SoundMap() {
 
   // marker を lng 順に並べる
   const soundMap = useMemo(() => {
+    if (!markers.length) {
+      return [];
+    }
+
     const list = [...markers];
     const sorted = list.sort((a, b) => {
       // longitude is [-180 ... 180] shift [0 ... 360]
@@ -102,9 +121,9 @@ export default function SoundMap() {
       const position = convertPosition(marker.position);
       const volume = getVolumeByWind(marker.weather);
 
-      const time = getTimeByLng(position[0]);
+      const time = getSectionBeetByLng(position[0]);
       // TODO: generate duration by distance
-      const duration = !marker.distance ? '8n' : '16n';
+      const duration = !marker.distance ? '8n' : '32n';
 
       return {
         id: marker.id,
@@ -122,7 +141,49 @@ export default function SoundMap() {
     return soundMap;
   }, [markers]);
 
-  // console.log('sorted', soundMap);
+  const melodyLine = useMemo(() => {
+    return soundMap.reduce((arr, data) => {
+      const note = { ...data.melody };
+      const [section, beat] = note.time;
+
+      if (!arr[section]) {
+        arr[section] = [];
+      }
+
+      if (!arr[section][beat]) {
+        arr[section][beat] = note;
+      } else {
+        let next = beat + 1;
+        let nextSection = section;
+
+        while (true) {
+          if (section >= SECTIONS && next > BEAT) {
+            console.warn('not in sections', section, next, note);
+            break;
+          }
+
+          if (next > BEAT) {
+            next = next - BEAT;
+            nextSection += 1;
+            if (!arr[nextSection]) {
+              arr[nextSection] = [];
+            }
+          }
+
+          if (!arr[nextSection][next]) {
+            arr[nextSection][next] = note;
+            break;
+          }
+
+          next += 1;
+        }
+      }
+
+      return arr;
+    }, []);
+  }, [soundMap]);
+
+  console.log('sorted', soundMap, melodyLine);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -134,9 +195,8 @@ export default function SoundMap() {
     // mapping marker to canvas
     mappingMarkers(getCanvas())(soundMap);
 
-    const melodyLine = soundMap.map((data) => data.melody);
     dispatch({ type: SET_MELODY, melody: melodyLine });
-  }, [soundMap, getCanvas, dispatch]);
+  }, [soundMap, melodyLine, getCanvas, dispatch]);
 
   return (
     <>
