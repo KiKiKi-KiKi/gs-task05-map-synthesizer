@@ -1,6 +1,8 @@
-import React, { useState, useCallback, useReducer } from 'react';
+import React, { useState, useCallback, useReducer, useContext } from 'react';
 import MelodyContext from '../contexts/MelodyContext';
 import reducer from '../reducers/melody';
+import { PLAY, STOP } from '../actions/sound';
+import SoundContext from '../contexts/SoundContext';
 import MarkerList from './MarkerList';
 import SoundMap from './SoundMap';
 
@@ -30,37 +32,39 @@ function StopBtn({ onClick }) {
 }
 
 function Player({ melody }) {
+  const { soundDispatch } = useContext(SoundContext);
   const [isPlay, setPlay] = useState(false);
-
-  console.log('melody', melody);
 
   const onClickHandler = useCallback(() => {
     setPlay((isPlay) => {
       if (isPlay) {
         console.info('STOP MUSIC');
+        soundDispatch({ type: STOP });
       } else {
         console.info('START MUSIC');
+        soundDispatch({ type: PLAY, melody });
       }
       return !isPlay;
     });
-  }, []);
+  }, [melody]);
 
   return isPlay ? (
     <StopBtn onClick={onClickHandler} />
   ) : (
-    <PlayBtn onClick={onClickHandler} />
-  );
+      <PlayBtn onClick={onClickHandler} />
+    );
 }
 
 export default function Controller() {
   const [melody, dispatch] = useReducer(reducer);
-  const [selected, setSelected] = useState(false);
+  const { soundDispatch } = useContext(SoundContext);
+  const [selected, setSelected] = useState(true);
   const onChange = useCallback(
     (isActive) => () => {
       if (isActive) {
         return false;
       }
-      // TODO: stop music
+      soundDispatch({ type: STOP });
       setSelected((select) => !select);
     },
     [],

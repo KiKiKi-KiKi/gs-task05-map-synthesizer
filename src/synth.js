@@ -1,4 +1,4 @@
-import { Transport, FMSynth, PolySynth } from 'tone';
+import { Transport, FMSynth, PolySynth, Part } from 'tone';
 
 const TONES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
@@ -206,7 +206,7 @@ const setSynth = () => {
     return synth;
   }
   const fmSynth = new FMSynth().master;
-  synth = new PolySynth(4, fmSynth, {
+  synth = new PolySynth(5, fmSynth, {
     oscillator: {
       type: 'square',
     },
@@ -223,3 +223,32 @@ export const testSounde = (code) => {
 };
 
 export const synthInit = () => setSynth();
+
+// Player
+const DEFAULT_BPM = 1600;
+
+export const onPlayMusic = (melody) => {
+  console.log('onPlayMusic', melody);
+  const synth = setSynth();
+
+  function setPlay(time, note) {
+    console.log(time, note);
+    synth.triggerAttackRelease(note.note, note.duration, time, note.velocity);
+  }
+
+  const player = new Part(setPlay, melody);
+  player.start(0);
+
+  // infinity loop
+  //player.loop = true;
+  //player.loopStart = 0;
+  //player.loopEnd = '8:00:00';
+
+  Transport.bpm.value = DEFAULT_BPM;
+  Transport.start();
+};
+
+export const onStopMusic = () => {
+  Transport.stop();
+  Transport.cancel();
+};
