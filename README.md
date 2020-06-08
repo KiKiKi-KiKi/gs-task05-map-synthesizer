@@ -97,3 +97,42 @@ function animation(now = 0) {
 })();
 ```
 
+#### BPM (tempo)
+
+1分間の4分音符の拍数 Beats Per Minute  
+cf. 
+
+- https://ja.wikipedia.org/wiki/%E3%83%86%E3%83%B3%E3%83%9D  
+- http://book.studionoah.jp/2014/11/_24/
+
+e.g. 
+
+- 60 BPM ... M.M.=60 => 1 minute 60 beats
+
+```js
+let requestID;
+let time;
+let section = 0;
+const minBeat = 16; // 16分音符でカウント
+const beatBase = 4; // 4分音符
+const bpm = 120;
+const m = 60 * 1000;
+
+function animation(now = 0) {
+  // 4章節カウント
+  if (section >= 4) { return; }
+  const elapsed = now - time;
+  const beat = Math.floor(elapsed / (m / (bpm * minBeat / beatBase)));
+  console.log(section, beat);
+  if (beat >= minBeat) {
+    time = now;
+    section += 1;
+  }
+  requestID = requestAnimationFrame(animation);
+}
+
+(function() {
+  time = performance.now();
+  requestID = requestAnimationFrame(animation);
+})();
+```
