@@ -38,3 +38,62 @@ dist = SQRT( (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) )
 ```
 
 - http://www.geisya.or.jp/~mwm48961/kou2/v_coord4.html
+
+
+## requestAnimationFrame
+
+- https://developer.mozilla.org/ja/docs/Web/API/Window/requestAnimationFrame
+- http://yomotsu.net/blog/2013/01/05/fps.html
+- https://ja.javascript.info/js-animation
+
+### performance.now()
+
+>`performance.now()` メソッドは、ミリ秒単位で計測された [`DOMHighResTimeStamp`](https://developer.mozilla.org/ja/docs/Web/API/DOMHighResTimeStamp) を返します。  
+> https://developer.mozilla.org/ja/docs/Web/API/Performance/now
+
+
+#### FPS
+
+1秒間のコマ数 frames per second  
+cf. https://nvr.bz/topics/knowledge/what-framerate.php
+
+e.g. 
+
+- 5 FPS ... 1 second 5 images
+- 50FPS ... 1 second 50 images
+
+> JavaScriptにおけるフレームレートの考え方  
+> プログラムにおいては、1000ミリ秒という単位で考えられる  
+> `setTimeout` や `setInterval` の秒指定に1000で1秒という値に「30」やら「1」などの値を見ることもあります。 「1」にするという事は1000f/sというCPU処理になる  
+> 描画フレームの最高値が60fpsだとすると、1000÷60 fpsより低い値にしても意味がない  
+> 60FPS `1000 / 60 = 16.667`  
+> 30FPS `1000 / 30 = 33.333`  
+> 24FPS `1000 / 24 = 41.667`  
+> 8FPS `1000 / 8 = 125`  
+> cf. http://wordpress.ideacompo.com/?p=4818
+
+```js
+const fps = 30;
+let limit = 0;
+let requestID;
+let time = 0;
+let preFrame;
+
+function animation(now = 0) {
+  if (limit > 3) { return; }
+  const frame = Math.floor((now - time) / (1000 / fps));
+  if (preFrame !== frame) { console.log(frame); }
+  preFrame = frame;
+  if (frame >= fps) {
+    time = now;
+    limit += 1;
+  }
+  requestID = requestAnimationFrame(animation);
+}
+
+(function() {
+  time = performance.now();
+  requestID = requestAnimationFrame(animation);
+})();
+```
+
