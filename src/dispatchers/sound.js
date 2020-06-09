@@ -1,5 +1,8 @@
 import { SOUND, PLAY, STOP } from '../actions/sound';
-import { synthInit, onPlayMusic, onStopMusic } from '../synth';
+import { synthInit } from '../synth';
+import Player from '../player';
+
+const player = new Player();
 
 const soundDispatcher = (action) => {
   const synth = synthInit();
@@ -9,12 +12,12 @@ const soundDispatcher = (action) => {
       return synth.triggerAttackRelease(action.code, '8n');
     }
     case PLAY: {
-      console.log(action.melody);
-      onPlayMusic(action.melody);
+      console.log('PLAY', action.melody);
+      player.play(action.melody);
       return;
     }
     case STOP: {
-      onStopMusic();
+      player.stop();
       return;
     }
     default: {

@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from 'react';
 import { getColorByLat, LAT_MAX, LNG_MAX } from '../config';
+import { SECTIONS, MIN_BEAT as BEAT } from '../player';
 import {
   convertPosition,
   convertLng,
@@ -39,9 +40,7 @@ const getTimeByLng = (x) => {
 };
 */
 
-const SECTIONS = 8; // 8 章節
-const BEAT = 64; // 64 分音符換算
-const SECTION_PAR_POS = (LNG_MAX * 2) / SECTIONS; // 1 楽章辺りの長さ
+const SECTION_PAR_POS = CANVAS_WIDTH / SECTIONS; // 1 楽章辺りの長さ
 
 const getSectionBeetByLng = (x) => {
   const section = Math.floor(x / SECTION_PAR_POS);
@@ -53,14 +52,14 @@ const getSectionBeetByLng = (x) => {
 
 // x の位置を最大距離換算で変換する
 const convertXtoMaxDistance = (maxDistance, firstPosition) => {
-  const margin = (maxDistance / SECTIONS) / 8;
+  const margin = maxDistance / SECTIONS / 8;
   const adjustMax = maxDistance + margin * 2;
   const lngMax = LNG_MAX * 2;
   const max = adjustMax > lngMax ? lngMax : adjustMax;
   const startX = adjustMax > lngMax ? 0 : firstPosition - margin;
   return (x) => {
-    return (x - startX) * lngMax / max;
-  }
+    return ((x - startX) * lngMax) / max;
+  };
 };
 
 const canvasInit = (ctx) => {
@@ -129,7 +128,10 @@ export default function SoundMap() {
 
     // console.log(distanceList);
 
-    const convertPosX = convertXtoMaxDistance(maxDistance, sorted[0].position.lng);
+    const convertPosX = convertXtoMaxDistance(
+      maxDistance,
+      sorted[0].position.lng,
+    );
 
     const soundMap = distanceList.map((marker) => {
       const code = marker.code;
@@ -145,7 +147,7 @@ export default function SoundMap() {
         id: marker.id,
         melody: {
           time: time,
-          note: code,
+          code: code,
           duration: duration,
           velocity: volume,
         },

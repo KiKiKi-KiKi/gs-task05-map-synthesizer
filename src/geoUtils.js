@@ -31,7 +31,7 @@ export const getPositionDistance = (pos1, pos2) => {
 export const getMaxDistance = (markers) => {
   const len = markers.length;
   if (len < 2) {
-    return null;
+    return 0;
   }
   const firstPos = markers[0].position;
   const endPos = markers[len - 1].position;

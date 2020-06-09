@@ -46,13 +46,13 @@ function Player({ melody }) {
       }
       return !isPlay;
     });
-  }, [melody]);
+  }, [melody, soundDispatch]);
 
   return isPlay ? (
     <StopBtn onClick={onClickHandler} />
   ) : (
-      <PlayBtn onClick={onClickHandler} />
-    );
+    <PlayBtn onClick={onClickHandler} />
+  );
 }
 
 export default function Controller() {
@@ -67,7 +67,7 @@ export default function Controller() {
       soundDispatch({ type: STOP });
       setSelected((select) => !select);
     },
-    [],
+    [soundDispatch],
   );
 
   const cx = [...TAB_CLASSES];
