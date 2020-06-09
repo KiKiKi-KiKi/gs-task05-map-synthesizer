@@ -62,6 +62,83 @@ const convertXtoMaxDistance = (maxDistance, firstPosition) => {
   };
 };
 
+// TODO: 後できれいな再帰計算にする・関数のあるべき場所はココではない
+const convertBEARtoBEATString = (beats) => {
+  let par = BEAT;
+  // 全音符
+  let note = Math.round((beats / par) * 10) / 10;
+  if (note > 1) {
+    if (note < 1.5) {
+      return `${Math.floor(note)}m`;
+    }
+    return `${Math.floor(note)}m.`;
+  }
+  // 2分音符
+  par = par / 2;
+  note = Math.floor((beats / par) * 10) / 10;
+  if (note > 1) {
+    if (note < 1.5) {
+      return '2n';
+    }
+    return '2n.';
+  }
+  // 4分音符
+  par = par / 2;
+  note = Math.floor((beats / par) * 10) / 10;
+  if (note > 1) {
+    if (note < 1.5) {
+      return '4n';
+    }
+    return '4n.';
+  }
+  // 8分音符
+  par = par / 2;
+  note = Math.floor((beats / par) * 10) / 10;
+  if (note > 1) {
+    if (note < 1.5) {
+      return '8n';
+    }
+    return '8n.';
+  }
+  // 16部音符
+  par = par / 2;
+  note = Math.floor((beats / par) * 10) / 10;
+  if (note > 1) {
+    if (note < 1.5) {
+      return '16n';
+    }
+    return '16n.';
+  }
+  // 36部音符
+  par = par / 2;
+  note = Math.floor((beats / par) * 10) / 10;
+  if (note > 1) {
+    if (note < 1.5) {
+      return '36n';
+    }
+    return '36n.';
+  }
+  // 64分音符
+  par = par / 2;
+  note = Math.floor((beats / par) * 10) / 10;
+  if (note >= 1.5) {
+    return '64n.';
+  }
+  return '64n';
+};
+
+// 距離を 音符の長さに変換する
+const convertDisttoBeatLength = (maxDistance) => {
+  const beatNum = SECTIONS * BEAT; // 楽章全体の拍数
+  console.log('BEATNUM', maxDistance, beatNum);
+  return (dist) => {
+    // BEAT の 数
+    const beatLength = dist * beatNum / maxDistance;
+    // console.log(beatLength, convertBEARtoBEATString(beatLength));
+    return convertBEARtoBEATString(beatLength);
+  }
+}
+
 const canvasInit = (ctx) => {
   ctx.canvas.width = CANVAS_WIDTH * SCALE;
   ctx.canvas.height = CANVAS_HEIGHT * SCALE;
@@ -133,6 +210,8 @@ export default function SoundMap() {
       sorted[0].position.lng,
     );
 
+    const getBeatLength = convertDisttoBeatLength(maxDistance);
+
     const soundMap = distanceList.map((marker) => {
       const code = marker.code;
       const [x, y] = convertPosition(marker.position);
@@ -141,7 +220,7 @@ export default function SoundMap() {
 
       const time = getSectionBeetByLng(adjustX);
       // TODO: generate duration by distance
-      const duration = !marker.distance ? '8n' : '32n';
+      const duration = !marker.distance ? '8n' : getBeatLength(marker.distance);
 
       return {
         id: marker.id,
