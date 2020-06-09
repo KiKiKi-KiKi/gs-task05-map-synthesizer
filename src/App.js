@@ -5,6 +5,7 @@ import SoundContext from './contexts/SoundContext';
 import markersReducer from './reducers/markers';
 import playerReducer, { INITIAL_STATE } from './reducers/player';
 import { default as soundDispatch } from './dispatchers/sound';
+import LoaingCover from './components/LoaingCover';
 import Controller from './components/Controller';
 import Map from './components/Map';
 import './styles/app.scss';
@@ -30,11 +31,7 @@ export default function App() {
             value={{ player, playerDispatch, soundDispatch }}
           >
             <div className="map-container">
-              {firstPos ? (
-                <Map initialPosition={firstPos} />
-              ) : (
-                <p>Loading...</p>
-              )}
+              {firstPos ? <Map initialPosition={firstPos} /> : <LoaingCover />}
             </div>
             <Controller />
           </SoundContext.Provider>

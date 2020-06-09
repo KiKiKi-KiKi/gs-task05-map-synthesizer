@@ -1,0 +1,26 @@
+.loading-cover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #f5fbfc;
+  text-align: center;
+  background-color: #cae6f2;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+
+  .loader {
+    margin-top: -1rem;
+  }
+
+  .fa-loading {
+    width: 3rem;
+  }
+  .label {
+    font-weight: 500;
+    margin-top: .8rem;
+  }
+}
