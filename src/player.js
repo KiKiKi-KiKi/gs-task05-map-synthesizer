@@ -70,16 +70,21 @@ class Player {
     this.requestID = requestAnimationFrame(loop);
   }
 
-  stop() {
+  pause() {
     const requestID = this.requestID;
     // already stop
     if (!requestID) {
       return;
     }
-
     cancelAnimationFrame(requestID);
     this.requestID = null;
   }
+
+  stop() {
+    this.pause();
+    this.reset();
+  }
+
 }
 
 export default Player;

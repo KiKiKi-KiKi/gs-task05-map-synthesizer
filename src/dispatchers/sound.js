@@ -1,5 +1,5 @@
 import { SOUND } from '../actions/sound';
-import { PLAY, STOP } from '../actions/player';
+import { PLAY, STOP, PAUSE } from '../actions/player';
 import { synthInit } from '../synth';
 import Player from '../player';
 
@@ -19,6 +19,10 @@ const soundDispatcher = (action) => {
     }
     case STOP: {
       player.stop();
+      return;
+    }
+    case PAUSE: {
+      player.pause();
       return;
     }
     default: {

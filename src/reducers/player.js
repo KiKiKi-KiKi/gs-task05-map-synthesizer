@@ -1,4 +1,4 @@
-import { PLAY, STOP } from '../actions/player';
+import { PLAY, STOP, PAUSE } from '../actions/player';
 import { default as soundDispatch } from '../dispatchers/sound';
 
 export const INITIAL_STATE = {
@@ -20,6 +20,13 @@ const reducer = (state = INITIAL_STATE, action) => {
         ...state,
         isPlay: false,
       };
+    }
+    case PAUSE: {
+      soundDispatch({ type: PAUSE });
+      return {
+        ...state,
+        isPlay: false,
+      }
     }
     default: {
       return state;
