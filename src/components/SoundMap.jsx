@@ -5,7 +5,7 @@ import React, {
   useRef,
   useEffect,
 } from 'react';
-import { getColorByLat, LAT_MAX, LNG_MAX } from '../config';
+import { getColorByLat, LAT_MAX, LNG_MAX, CANVAS_SCALE } from '../config';
 import { SECTIONS, MIN_BEAT as BEAT } from '../player';
 import {
   convertPosition,
@@ -13,15 +13,16 @@ import {
   getPositionDistance,
   getMaxDistance,
 } from '../geoUtils';
-import MelodyContext from '../contexts/MelodyContext';
 import { SET_MELODY } from '../actions/melody';
+import MelodyContext from '../contexts/MelodyContext';
+import { SET_CANVAS } from '../actions/player';
+import SoundContext from '../contexts/SoundContext';
 import { getVolumeByWind } from '../synth';
 import MapContext from '../contexts/MapContext';
 
 const PI2 = Math.PI * 2;
 const CANVAS_WIDTH = LNG_MAX * 2;
 const CANVAS_HEIGHT = LAT_MAX;
-const SCALE = 10;
 
 /*
 import { zeroPadding } from '../utils';
@@ -130,7 +131,7 @@ const convertBEARtoBEATString = (beats) => {
 // 距離を 音符の長さに変換する
 const convertDisttoBeatLength = (maxDistance) => {
   const beatNum = SECTIONS * BEAT; // 楽章全体の拍数
-  console.log('BEATNUM', maxDistance, beatNum);
+  // console.log('BEATNUM', maxDistance, beatNum);
   return (dist) => {
     // BEAT の 数
     const beatLength = (dist * beatNum) / maxDistance;
@@ -140,8 +141,8 @@ const convertDisttoBeatLength = (maxDistance) => {
 };
 
 const canvasInit = (ctx) => {
-  ctx.canvas.width = CANVAS_WIDTH * SCALE;
-  ctx.canvas.height = CANVAS_HEIGHT * SCALE;
+  ctx.canvas.width = CANVAS_WIDTH * CANVAS_SCALE;
+  ctx.canvas.height = CANVAS_HEIGHT * CANVAS_SCALE;
   return ctx;
 };
 
@@ -164,6 +165,8 @@ const mappingMarkers = (ctx) => (markers) => {
 export default function SoundMap() {
   const { markers } = useContext(MapContext);
   const { dispatch } = useContext(MelodyContext);
+  const { playerDispatch } = useContext(SoundContext);
+  const coverRef = useRef(null);
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const getCanvas = useCallback(() => ctxRef.current, []);
@@ -184,7 +187,7 @@ export default function SoundMap() {
 
     // 始点と終点の距離
     const maxDistance = getMaxDistance(sorted) || CANVAS_WIDTH;
-    console.log('MacDistance', maxDistance);
+    // console.log('MaxDistance', maxDistance);
 
     const distanceList = sorted.reduce((arr, marker) => {
       const _marker = { ...marker };
@@ -243,6 +246,9 @@ export default function SoundMap() {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     ctxRef.current = canvasInit(ctx);
+
+    const coverCtx = canvasInit(coverRef.current.getContext('2d'));
+    playerDispatch({ type: SET_CANVAS, canvas: coverCtx });
   }, []);
 
   useEffect(() => {
@@ -256,7 +262,7 @@ export default function SoundMap() {
   return (
     <>
       <div className="sound-map">
-        {/* TODO: payer line canvas */}
+        <canvas className="sound-map-canvas-cover" ref={coverRef}></canvas>
         <canvas className="sound-map-canvas" ref={canvasRef}></canvas>
       </div>
     </>

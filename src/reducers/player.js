@@ -1,8 +1,9 @@
-import { PLAY, STOP, PAUSE } from '../actions/player';
+import { PLAY, STOP, PAUSE, SET_CANVAS } from '../actions/player';
 import { default as soundDispatch } from '../dispatchers/sound';
 
 export const INITIAL_STATE = {
   isPlay: false,
+  canvas: null,
 };
 
 const reducer = (state = INITIAL_STATE, action) => {
@@ -27,6 +28,14 @@ const reducer = (state = INITIAL_STATE, action) => {
         ...state,
         isPlay: false,
       };
+    }
+    // TODO: 暫定対応
+    case SET_CANVAS: {
+      soundDispatch({ type: SET_CANVAS, canvas: action.canvas });
+      return {
+        ...state,
+        canvas: action.canvas,
+      }
     }
     default: {
       return state;

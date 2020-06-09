@@ -1,5 +1,5 @@
 import { SOUND } from '../actions/sound';
-import { PLAY, STOP, PAUSE } from '../actions/player';
+import { PLAY, STOP, PAUSE, SET_CANVAS } from '../actions/player';
 import { synthInit } from '../synth';
 import Player from '../player';
 
@@ -23,6 +23,11 @@ const soundDispatcher = (action) => {
     }
     case PAUSE: {
       player.pause();
+      return;
+    }
+    // TODO: 暫定対応
+    case SET_CANVAS: {
+      player.setCtx(action.canvas);
       return;
     }
     default: {

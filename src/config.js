@@ -20,6 +20,7 @@ export const COLORS = Object.freeze([
 
 export const LAT_MAX = 90;
 export const LNG_MAX = 180;
+export const CANVAS_SCALE = 10;
 
 export const getColorByLat = (lat) => {
   const max = COLORS.length;
