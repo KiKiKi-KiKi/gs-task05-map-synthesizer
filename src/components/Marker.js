@@ -48,7 +48,7 @@ export const addMarkerEvents = ({
   marker._getWeather({ lat, lng });
 };
 
-const Marker = ({ id, map, maps, position, onSound, onDelete }) => {
+const Marker = ({ id, map, maps, position, onSound, onStopPlayer, onDelete }) => {
   const marker = new maps.Marker({
     position: position,
     map,
@@ -111,6 +111,7 @@ const Marker = ({ id, map, maps, position, onSound, onDelete }) => {
   });
 
   marker.addListener('dragstart', () => {
+    onStopPlayer();
     if (!openWindow) {
       return false;
     }

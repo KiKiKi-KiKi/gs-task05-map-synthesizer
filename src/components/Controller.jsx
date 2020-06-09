@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useReducer, useContext } from 'react';
 import MelodyContext from '../contexts/MelodyContext';
 import reducer from '../reducers/melody';
-import { PLAY, STOP } from '../actions/sound';
+import { PLAY, STOP } from '../actions/player';
 import SoundContext from '../contexts/SoundContext';
 import MarkerList from './MarkerList';
 import SoundMap from './SoundMap';
@@ -32,42 +32,38 @@ function StopBtn({ onClick }) {
 }
 
 function Player({ melody }) {
-  const { soundDispatch } = useContext(SoundContext);
-  const [isPlay, setPlay] = useState(false);
+  const { player: { isPlay }, playerDispatch } = useContext(SoundContext);
 
   const onClickHandler = useCallback(() => {
-    setPlay((isPlay) => {
-      if (isPlay) {
-        console.info('STOP MUSIC');
-        soundDispatch({ type: STOP });
-      } else {
-        console.info('START MUSIC');
-        soundDispatch({ type: PLAY, melody });
-      }
-      return !isPlay;
-    });
-  }, [melody, soundDispatch]);
+    if (isPlay) {
+      console.info('STOP MUSIC');
+      playerDispatch({ type: STOP });
+    } else {
+      console.info('START MUSIC');
+      playerDispatch({ type: PLAY, melody });
+    }
+  }, [isPlay, melody, playerDispatch]);
 
   return isPlay ? (
     <StopBtn onClick={onClickHandler} />
   ) : (
-    <PlayBtn onClick={onClickHandler} />
-  );
+      <PlayBtn onClick={onClickHandler} />
+    );
 }
 
 export default function Controller() {
   const [melody, dispatch] = useReducer(reducer);
-  const { soundDispatch } = useContext(SoundContext);
+  const { playerDispatch } = useContext(SoundContext);
   const [selected, setSelected] = useState(true);
   const onChange = useCallback(
     (isActive) => () => {
       if (isActive) {
         return false;
       }
-      soundDispatch({ type: STOP });
+      playerDispatch({ type: STOP });
       setSelected((select) => !select);
     },
-    [soundDispatch],
+    [playerDispatch],
   );
 
   const cx = [...TAB_CLASSES];

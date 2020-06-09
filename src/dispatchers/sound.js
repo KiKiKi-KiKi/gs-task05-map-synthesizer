@@ -1,4 +1,5 @@
-import { SOUND, PLAY, STOP } from '../actions/sound';
+import { SOUND } from '../actions/sound';
+import { PLAY, STOP } from '../actions/player';
 import { synthInit } from '../synth';
 import Player from '../player';
 

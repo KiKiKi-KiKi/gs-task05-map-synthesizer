@@ -6,6 +6,7 @@ import {
   REMOVE_MARKER,
 } from '../actions/marker';
 import { SOUND } from '../actions/sound';
+import { STOP } from '../actions/player';
 import MapContext from '../contexts/MapContext';
 import SoundContext from '../contexts/SoundContext';
 import GoogleMapReact from 'google-map-react';
@@ -15,7 +16,7 @@ import { synthInit } from '../synth';
 
 export default function Map({ initialPosition }) {
   const { markers, dispatch } = useContext(MapContext);
-  const { soundDispatch } = useContext(SoundContext);
+  const { soundDispatch, playerDispatch } = useContext(SoundContext);
 
   // React 外の marker に渡している state が更新されないので ref object に格納して useEffect 内で更新する
   const markersRef = useRef(markers);
@@ -47,6 +48,10 @@ export default function Map({ initialPosition }) {
     [soundDispatch],
   );
 
+  const onStopPlayer = useCallback(() => {
+    playerDispatch({ type: STOP });
+  }, [playerDispatch]);
+
   const onDeleteMarker = useCallback(
     (id) => {
       dispatch({ type: REMOVE_MARKER, id });
@@ -62,6 +67,7 @@ export default function Map({ initialPosition }) {
 
   const addMarker = useCallback(
     ({ map, maps }) => (e) => {
+      onStopPlayer();
       console.log(`Add Marker`, e);
       const markerID = getMarkerID();
       const marker = Marker({
@@ -70,6 +76,7 @@ export default function Map({ initialPosition }) {
         maps,
         position: e.latLng,
         onSound,
+        onStopPlayer,
         onDelete: onDeleteMarker,
       });
       dispatch({ type: ADD_MARKER, marker, id: markerID });
@@ -82,6 +89,7 @@ export default function Map({ initialPosition }) {
       onChangeWeather,
       onSound,
       onDeleteMarker,
+      onStopPlayer,
     ],
   );
 
