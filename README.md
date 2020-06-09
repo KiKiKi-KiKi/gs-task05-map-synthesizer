@@ -21,6 +21,9 @@ cf.
 
 https://github.com/Tonejs/Tone.js
 
+Time  
+https://github.com/Tonejs/Tone.js/wiki/Time
+
 cf. 
 - https://qiita.com/i-ryo/items/340b9f3b791b7c2f7d18
 - https://www.i-ryo.com/entry/2019/05/21/222200
