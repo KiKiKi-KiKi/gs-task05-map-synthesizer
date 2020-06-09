@@ -48,7 +48,15 @@ export const addMarkerEvents = ({
   marker._getWeather({ lat, lng });
 };
 
-const Marker = ({ id, map, maps, position, onSound, onStopPlayer, onDelete }) => {
+const Marker = ({
+  id,
+  map,
+  maps,
+  position,
+  onSound,
+  onStopPlayer,
+  onDelete,
+}) => {
   const marker = new maps.Marker({
     position: position,
     map,

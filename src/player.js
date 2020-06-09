@@ -84,7 +84,6 @@ class Player {
     this.pause();
     this.reset();
   }
-
 }
 
 export default Player;

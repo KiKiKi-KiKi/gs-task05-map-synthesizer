@@ -133,11 +133,11 @@ const convertDisttoBeatLength = (maxDistance) => {
   console.log('BEATNUM', maxDistance, beatNum);
   return (dist) => {
     // BEAT の 数
-    const beatLength = dist * beatNum / maxDistance;
+    const beatLength = (dist * beatNum) / maxDistance;
     // console.log(beatLength, convertBEARtoBEATString(beatLength));
     return convertBEARtoBEATString(beatLength);
-  }
-}
+  };
+};
 
 const canvasInit = (ctx) => {
   ctx.canvas.width = CANVAS_WIDTH * SCALE;
@@ -238,50 +238,6 @@ export default function SoundMap() {
 
     return soundMap;
   }, [markers]);
-  /*
-  const melodyLine = useMemo(() => {
-    return soundMap.reduce((arr, data) => {
-      const note = { ...data.melody };
-      const [section, beat] = note.time;
-
-      if (!arr[section]) {
-        arr[section] = [];
-      }
-
-      if (!arr[section][beat]) {
-        arr[section][beat] = note;
-      } else {
-        let next = beat + 1;
-        let nextSection = section;
-
-        while (true) {
-          if (section >= SECTIONS && next > BEAT) {
-            console.warn('not in sections', section, next, note);
-            break;
-          }
-
-          if (next > BEAT) {
-            next = next - BEAT;
-            nextSection += 1;
-            if (!arr[nextSection]) {
-              arr[nextSection] = [];
-            }
-          }
-
-          if (!arr[nextSection][next]) {
-            arr[nextSection][next] = note;
-            break;
-          }
-
-          next += 1;
-        }
-      }
-
-      return arr;
-    }, []);
-  }, [soundMap]);
-  */
-  console.log('sorted', soundMap);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -300,6 +256,7 @@ export default function SoundMap() {
   return (
     <>
       <div className="sound-map">
+        {/* TODO: payer line canvas */}
         <canvas className="sound-map-canvas" ref={canvasRef}></canvas>
       </div>
     </>

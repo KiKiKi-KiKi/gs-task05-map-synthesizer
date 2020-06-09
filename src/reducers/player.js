@@ -26,12 +26,12 @@ const reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isPlay: false,
-      }
+      };
     }
     default: {
       return state;
     }
   }
-}
+};
 
 export default reducer;

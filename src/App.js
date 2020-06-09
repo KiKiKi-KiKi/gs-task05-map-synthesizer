@@ -26,13 +26,15 @@ export default function App() {
     <>
       <div className="container">
         <MapContext.Provider value={{ markers, dispatch: markerDispatch }}>
-          <SoundContext.Provider value={{ player, playerDispatch, soundDispatch }}>
+          <SoundContext.Provider
+            value={{ player, playerDispatch, soundDispatch }}
+          >
             <div className="map-container">
               {firstPos ? (
                 <Map initialPosition={firstPos} />
               ) : (
-                  <p>Loading...</p>
-                )}
+                <p>Loading...</p>
+              )}
             </div>
             <Controller />
           </SoundContext.Provider>

@@ -32,7 +32,10 @@ function StopBtn({ onClick }) {
 }
 
 function Player({ melody }) {
-  const { player: { isPlay }, playerDispatch } = useContext(SoundContext);
+  const {
+    player: { isPlay },
+    playerDispatch,
+  } = useContext(SoundContext);
 
   const onClickHandler = useCallback(() => {
     if (isPlay) {
@@ -47,8 +50,8 @@ function Player({ melody }) {
   return isPlay ? (
     <StopBtn onClick={onClickHandler} />
   ) : (
-      <PlayBtn onClick={onClickHandler} />
-    );
+    <PlayBtn onClick={onClickHandler} />
+  );
 }
 
 export default function Controller() {
