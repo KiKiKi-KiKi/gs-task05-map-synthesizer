@@ -6,7 +6,6 @@ import React, {
   useEffect,
 } from 'react';
 import { getColorByLat, LAT_MAX, LNG_MAX } from '../config';
-import { zeroPadding } from '../utils';
 import {
   convertPosition,
   convertLng,
@@ -24,6 +23,7 @@ const CANVAS_HEIGHT = LAT_MAX;
 const SCALE = 10;
 
 /*
+import { zeroPadding } from '../utils';
 const MM = 60 * 60;
 const MELODY_TIME = 8 * MM;
 
@@ -51,12 +51,25 @@ const getSectionBeetByLng = (x) => {
   return [section, beatPost];
 };
 
+// x の位置を最大距離換算で変換する
+const convertXtoMaxDistance = (maxDistance, firstPosition) => {
+  const margin = (maxDistance / SECTIONS) / 8;
+  const adjustMax = maxDistance + margin * 2;
+  const lngMax = LNG_MAX * 2;
+  const max = adjustMax > lngMax ? lngMax : adjustMax;
+  const startX = adjustMax > lngMax ? 0 : firstPosition - margin;
+  return (x) => {
+    return (x - startX) * lngMax / max;
+  }
+};
+
 const canvasInit = (ctx) => {
   ctx.canvas.width = CANVAS_WIDTH * SCALE;
   ctx.canvas.height = CANVAS_HEIGHT * SCALE;
   return ctx;
 };
 
+// Draw point to canvas
 const mappingMarkers = (ctx) => (markers) => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
@@ -94,7 +107,7 @@ export default function SoundMap() {
     });
 
     // 始点と終点の距離
-    const maxDistance = getMaxDistance(sorted);
+    const maxDistance = getMaxDistance(sorted) || CANVAS_WIDTH;
     console.log('MacDistance', maxDistance);
 
     const distanceList = sorted.reduce((arr, marker) => {
@@ -116,12 +129,15 @@ export default function SoundMap() {
 
     // console.log(distanceList);
 
+    const convertPosX = convertXtoMaxDistance(maxDistance, sorted[0].position.lng);
+
     const soundMap = distanceList.map((marker) => {
       const code = marker.code;
-      const position = convertPosition(marker.position);
+      const [x, y] = convertPosition(marker.position);
+      const adjustX = convertPosX(x);
       const volume = getVolumeByWind(marker.weather);
 
-      const time = getSectionBeetByLng(position[0]);
+      const time = getSectionBeetByLng(adjustX);
       // TODO: generate duration by distance
       const duration = !marker.distance ? '8n' : '32n';
 
@@ -133,14 +149,15 @@ export default function SoundMap() {
           duration: duration,
           velocity: volume,
         },
-        position,
+        _position: [x, y],
+        position: [adjustX, y],
         distance: marker.distance || 0,
       };
     });
 
     return soundMap;
   }, [markers]);
-
+  /*
   const melodyLine = useMemo(() => {
     return soundMap.reduce((arr, data) => {
       const note = { ...data.melody };
@@ -182,8 +199,8 @@ export default function SoundMap() {
       return arr;
     }, []);
   }, [soundMap]);
-
-  console.log('sorted', soundMap, melodyLine);
+  */
+  console.log('sorted', soundMap);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -195,8 +212,9 @@ export default function SoundMap() {
     // mapping marker to canvas
     mappingMarkers(getCanvas())(soundMap);
 
+    const melodyLine = soundMap.map((data) => data.melody);
     dispatch({ type: SET_MELODY, melody: melodyLine });
-  }, [soundMap, melodyLine, getCanvas, dispatch]);
+  }, [soundMap, getCanvas, dispatch]);
 
   return (
     <>
