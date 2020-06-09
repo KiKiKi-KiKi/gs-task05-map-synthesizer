@@ -1,6 +1,6 @@
 import { synthInit } from './synth';
 
-export const SECTIONS = 8; // 8 章節 で演奏
+export const SECTIONS = 4; // 4 章節 で演奏
 export const MIN_BEAT = 64; // 64 分音符換算
 const BASE_BEAT = 4; // BPMは4分音符換算なので
 const MINUTES = 60 * 1000; // 1000
@@ -10,11 +10,13 @@ function getTime() {
 }
 
 class Player {
-  constructor(bpm = 120) {
+  constructor(bpm = 180) {
     this.requestID = null;
     this.section = 0;
+    this.que = 0;
     this._bpm = bpm;
   }
+
   set bpm(bpm) {
     this._bpm = bpm;
   }
@@ -23,25 +25,25 @@ class Player {
     this.time = null;
     this.requestID = null;
     this.section = 0;
+    this.que = 0;
   }
 
   play(melody) {
+    console.log('BPM', this._bpm);
     const synth = synthInit();
     const beatPar = MINUTES / ((this._bpm * MIN_BEAT) / BASE_BEAT);
     console.log(beatPar, MINUTES, this._bpm);
-    let que = 0;
-
-    this.reset();
     this.time = getTime();
 
     const loop = (now = 0) => {
       if (this.section >= SECTIONS) {
-        // TODO: repeat
-        this.section = 0;
+        this.reset();
         console.log('LOOP END');
+        this.time = getTime();
+        this.requestID = requestAnimationFrame(loop);
         return;
       }
-      const note = melody[que];
+      const note = melody[this.que];
       const [triggerSection, triggerBeat] = note ? note.time : [null, null];
       const elapsed = now - this.time;
       const beat = Math.floor(elapsed / beatPar);
@@ -55,7 +57,7 @@ class Player {
           undefined,
           note.velocity,
         );
-        que += 1;
+        this.que += 1;
       }
 
       if (beat >= MIN_BEAT) {
