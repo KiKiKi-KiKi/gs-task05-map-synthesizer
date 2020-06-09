@@ -57,7 +57,7 @@ function Player({ melody }) {
 export default function Controller() {
   const [melody, dispatch] = useReducer(reducer);
   const { playerDispatch } = useContext(SoundContext);
-  const [selected, setSelected] = useState(true);
+  const [selected, setSelected] = useState(false);
   const onChange = useCallback(
     (isActive) => () => {
       if (isActive) {

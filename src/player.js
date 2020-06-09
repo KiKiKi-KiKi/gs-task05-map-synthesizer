@@ -34,7 +34,7 @@ class Player {
       return;
     }
     const posBeat = section * MIN_BEAT + beat;
-    const x = posBeat * CANVAS_WIDTH / (SECTIONS * MIN_BEAT);
+    const x = (posBeat * CANVAS_WIDTH) / (SECTIONS * MIN_BEAT);
     const ctx = this.ctx;
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.beginPath();
